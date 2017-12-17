@@ -1,0 +1,4 @@
+export GOOGLE_CREDENTIALS=${TF_CREDS}
+export GOOGLE_PROJECT=${TF_ADMIN}
+
+terraform init
