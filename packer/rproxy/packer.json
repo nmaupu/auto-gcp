@@ -1,0 +1,52 @@
+{
+  "variables": {
+    "google_creds": "{{env `GOOGLE_APPLICATION_CREDENTIALS`}}",
+    "project_id": "{{env `PROJECT_ID`}}",
+    "zone": "{{env `ZONE`}}",
+    "image_name_prefix": "{{env `IMAGE_NAME_PREFIX`}}",
+    "ingress_controller_port": "{{env `INGRESS_CONTROLLER_PORT`}}"
+  },
+  "builders": [{
+      "type": "googlecompute",
+      "account_file": "{{user `google_creds`}}",
+      "project_id": "{{user `project_id`}}",
+      "source_image_family": "centos-7",
+      "zone": "{{user `zone`}}",
+      "image_name": "{{user `image_name_prefix`}}-{{isotime | clean_image_name}}",
+      "ssh_username": "centos",
+      "ssh_pty": true,
+      "preemptible": true,
+      "tags": ["ssh"]
+  }],
+  "provisioners": [
+    {
+        "type": "file",
+        "source": "resources/nginx.conf",
+        "destination": "/tmp/nginx.conf"
+    },
+    {
+        "type": "file",
+        "source": "resources/update-kube-nodes.sh",
+        "destination": "/tmp/update-kube-nodes.sh"
+    },
+    {
+        "type": "file",
+        "source": "resources/update-kube-nodes.cron",
+        "destination": "/tmp/update-kube-nodes.cron"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo yum install -y nginx jq",
+        "sudo mv /tmp/nginx.conf /etc/nginx/nginx.conf",
+        "sed -i -e 's/@@PORT@@/{{user `ingress_controller_port`}}/g' /tmp/update-kube-nodes.sh",
+        "sudo mv /tmp/update-kube-nodes.sh /usr/local/bin",
+        "chmod +x /usr/local/bin/update-kube-nodes.sh",
+        "sudo su -c \"echo -n 'server localhost:80;' > /etc/nginx/kube-nodes.inc\"",
+        "sudo crontab -u root /tmp/update-kube-nodes.cron && rm -f /tmp/update-kube-nodes.cron",
+        "sudo systemctl enable nginx",
+        "sudo setsebool -P httpd_can_network_connect 1"
+      ]
+    }
+  ]
+}
