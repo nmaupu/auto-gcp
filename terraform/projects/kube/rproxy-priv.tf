@@ -16,18 +16,3 @@ module "rproxy-priv-instance" {
     "storage-ro",
   ]
 }
-
-resource "google_compute_firewall" "rproxy-priv-rules" {
-  name    = "rproxy-priv-http"
-  network = "${module.network.self_link}"
-
-  source_ranges = ["${var.rproxy_priv_sources}"]
-
-  allow {
-    protocol = "tcp"
-    ports    = ["${var.rproxy_allow_ports}"]
-  }
-
-  target_tags = ["rproxy-priv"]
-  project     = "${data.terraform_remote_state.projects.kube.project_id}"
-}

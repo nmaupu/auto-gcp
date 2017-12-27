@@ -20,11 +20,13 @@ rproxy_image_pub = "rproxy-pub-2017-12-17t17-19-35z"
 # public rproxy
 rproxy_priv_name = "rproxy-priv"
 rproxy_priv_machine_type = "f1-micro"
-rproxy_priv_preemptible = "true"
+rproxy_priv_preemptible = "false"
 rproxy_image_priv = "rproxy-priv-2017-12-17t17-27-07z"
+
 rproxy_priv_sources = [
-  "78.192.25.46"
+  "78.192.25.46/32"
 ]
-rproxy_allow_ports = [
-  "80", "443"
-]
+
+rproxy_http_port = "80"
+rproxy_https_port = "443"
+rproxy_ssh_port = "22"

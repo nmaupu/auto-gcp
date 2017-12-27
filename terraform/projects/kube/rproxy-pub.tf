@@ -15,16 +15,3 @@ module "rproxy-pub-instance" {
     "storage-ro",
   ]
 }
-
-resource "google_compute_firewall" "rproxy-pub-rules" {
-  name    = "rproxy-http"
-  network = "${module.network.self_link}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["${var.rproxy_allow_ports}"]
-  }
-
-  target_tags = ["rproxy-pub"]
-  project     = "${data.terraform_remote_state.projects.kube.project_id}"
-}
