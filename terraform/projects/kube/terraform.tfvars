@@ -21,7 +21,7 @@ rproxy_image_pub = "rproxy-pub-2017-12-17t17-19-35z"
 rproxy_priv_name = "rproxy-priv"
 rproxy_priv_machine_type = "f1-micro"
 rproxy_priv_preemptible = "false"
-rproxy_image_priv = "rproxy-priv-2017-12-17t17-27-07z"
+rproxy_image_priv = "rproxy-priv-2017-12-28t01-05-20z"
 
 rproxy_priv_sources = [
   "78.192.25.46/32"

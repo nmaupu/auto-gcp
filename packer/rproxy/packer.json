@@ -4,7 +4,9 @@
     "project_id": "{{env `PROJECT_ID`}}",
     "zone": "{{env `ZONE`}}",
     "image_name_prefix": "{{env `IMAGE_NAME_PREFIX`}}",
-    "ingress_controller_port": "{{env `INGRESS_CONTROLLER_PORT`}}"
+    "ingress_controller_port": "{{env `INGRESS_CONTROLLER_PORT`}}",
+    "cert_domains": "{{env `CERT_DOMAINS`}}",
+    "nginx_extra_confs_dir": "{{env `NGINX_EXTRA_CONFS_DIR`}}"
   },
   "builders": [{
       "type": "googlecompute",
@@ -15,36 +17,62 @@
       "image_name": "{{user `image_name_prefix`}}-{{isotime | clean_image_name}}",
       "ssh_username": "centos",
       "ssh_pty": true,
-      "preemptible": true,
-      "tags": ["ssh"]
+      "preemptible": true
   }],
   "provisioners": [
     {
-        "type": "file",
-        "source": "resources/nginx.conf",
-        "destination": "/tmp/nginx.conf"
+      "type": "file",
+      "source": "resources/nginx.conf",
+      "destination": "/tmp/nginx.conf"
     },
     {
-        "type": "file",
-        "source": "resources/update-kube-nodes.sh",
-        "destination": "/tmp/update-kube-nodes.sh"
+      "type": "file",
+      "source": "resources/update-kube-nodes.sh",
+      "destination": "/tmp/update-kube-nodes.sh"
     },
     {
-        "type": "file",
-        "source": "resources/update-kube-nodes.cron",
-        "destination": "/tmp/update-kube-nodes.cron"
+      "type": "file",
+      "source": "resources/update-kube-nodes.cron",
+      "destination": "/tmp/update-kube-nodes.cron"
+    },
+    {
+      "type": "file",
+      "source": "resources/bootstrap-certs.service",
+      "destination": "/tmp/bootstrap-certs.service"
+    },
+    {
+      "type": "file",
+      "source": "resources/bootstrap-cert.sh",
+      "destination": "/tmp/bootstrap-cert.sh"
     },
     {
       "type": "shell",
       "inline": [
-        "sudo yum install -y nginx jq",
+        "mkdir -p /tmp/nginx-confs"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "{{user `nginx_extra_confs_dir`}}/",
+      "destination": "/tmp/nginx-confs"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo yum install -y nginx jq certbot python2-certbot-nginx",
         "sudo mv /tmp/nginx.conf /etc/nginx/nginx.conf",
         "sed -i -e 's/@@PORT@@/{{user `ingress_controller_port`}}/g' /tmp/update-kube-nodes.sh",
         "sudo mv /tmp/update-kube-nodes.sh /usr/local/bin",
         "chmod +x /usr/local/bin/update-kube-nodes.sh",
         "sudo su -c \"echo -n 'server localhost:80;' > /etc/nginx/kube-nodes.inc\"",
+        "sudo mv /tmp/nginx-confs/* /etc/nginx/conf.d/ && rmdir /tmp/nginx-confs",
         "sudo crontab -u root /tmp/update-kube-nodes.cron && rm -f /tmp/update-kube-nodes.cron",
+        "sudo mv /tmp/bootstrap-cert.sh /usr/local/bin",
+        "sudo chmod +x /usr/local/bin/bootstrap-cert.sh",
+        "sudo mv /tmp/bootstrap-certs.service /etc/systemd/system/bootstrap-certs@.service",
+        "sudo systemctl daemon-reload",
         "sudo systemctl enable nginx",
+        "bash -x -c \"for d in {{user `cert_domains`}}; do sudo systemctl enable bootstrap-certs@\\$d.service; done\"",
         "sudo setsebool -P httpd_can_network_connect 1"
       ]
     }

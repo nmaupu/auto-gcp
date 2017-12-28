@@ -1,0 +1,17 @@
+[Unit]
+Description=Bootstrap Lets encrypt certs
+ConditionPathExists=!/etc/letsencrypt/already-bootstrapped-%I
+Requires=network-online.target
+After=network-online.target
+Before=nginx.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/bootstrap-cert.sh %I
+ExecStartPost=/bin/touch /etc/letsencrypt/already-bootstrapped-%I
+ExecStartPost=/bin/rm -f /var/run/certbot-is-running
+
+[Install]
+WantedBy=multi-user.target

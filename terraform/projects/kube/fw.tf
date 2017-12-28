@@ -1,3 +1,29 @@
+# HTTP ok from default (packer)
+resource "google_compute_firewall" "http-default" {
+  name    = "default-allow-http"
+  network = "default"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+
+  project     = "${data.terraform_remote_state.projects.kube.project_id}"
+}
+
+# ping ok from known sources
+resource "google_compute_firewall" "rproxy-icmp-rules" {
+  name    = "rproxy-icmp-allow"
+  network = "${module.network.self_link}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  target_tags = ["rproxy-pub", "rproxy-priv"]
+  project     = "${data.terraform_remote_state.projects.kube.project_id}"
+}
+
 # SSH ok from known sources
 resource "google_compute_firewall" "rproxy-ssh-rules" {
   name    = "rproxy-ssh"

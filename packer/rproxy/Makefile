@@ -4,6 +4,7 @@ default: build
 image_builder=hashicorp/packer:1.1.3
 zone=europe-west1-b
 INGRESS_CONTROLLER_PORT ?= 30080
+NGINX_EXTRA_CONFS_DIR ?= resources/nginx-confs-priv
 
 check-params:
 ifndef PROJECT_ID
@@ -15,16 +16,24 @@ endif
 ifndef IMAGE_NAME_PREFIX
 	$(error IMAGE_NAME_PREFIX is not defined)
 endif
+ifndef NGINX_EXTRA_CONFS_DIR
+	$(error NGINX_EXTRA_CONFS_DIR is not defined)
+endif
 
 build: check-params
+	# Getting all domains to generate a dedicated certificate
+	$(eval certs := $(shell ls -1 $(NGINX_EXTRA_CONFS_DIR) | grep 'ssl-' | sed -e 's/ssl-//' -e 's/.conf$$//'))
+	@echo $(certs)
 	docker run --rm \
-	-v $(TF_CREDS):/root/.google.json \
-	-e GOOGLE_APPLICATION_CREDENTIALS=/root/.google.json \
-	-e PROJECT_ID=$(PROJECT_ID) \
-	-e ZONE=$(zone) \
-	-e IMAGE_NAME_PREFIX=$(IMAGE_NAME_PREFIX) \
-	-e INGRESS_CONTROLLER_PORT=$(INGRESS_CONTROLLER_PORT) \
-	-v `pwd`:`pwd` \
-	-w `pwd` \
-	$(image_builder) \
-	build packer.json
+	  -v $(TF_CREDS):/root/.google.json \
+	  -e GOOGLE_APPLICATION_CREDENTIALS=/root/.google.json \
+	  -e PROJECT_ID=$(PROJECT_ID) \
+	  -e ZONE=$(zone) \
+	  -e IMAGE_NAME_PREFIX=$(IMAGE_NAME_PREFIX) \
+	  -e INGRESS_CONTROLLER_PORT=$(INGRESS_CONTROLLER_PORT) \
+	  -e NGINX_EXTRA_CONFS_DIR="$(NGINX_EXTRA_CONFS_DIR)" \
+	  -e CERT_DOMAINS="$(certs)" \
+	  -v `pwd`:`pwd` \
+	  -w `pwd` \
+	  $(image_builder) \
+	  build packer.json
