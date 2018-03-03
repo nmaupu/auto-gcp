@@ -4,7 +4,7 @@ default: build
 image_builder=hashicorp/packer:1.1.3
 zone=europe-west1-b
 INGRESS_CONTROLLER_PORT ?= 30080
-NGINX_EXTRA_CONFS_DIR ?= resources/nginx-confs-priv
+INGRESS_RECEIVER_VERSION ?= 1.0
 
 check-params:
 ifndef PROJECT_ID
@@ -15,9 +15,6 @@ ifndef INGRESS_CONTROLLER_PORT
 endif
 ifndef IMAGE_NAME_PREFIX
 	$(error IMAGE_NAME_PREFIX is not defined)
-endif
-ifndef NGINX_EXTRA_CONFS_DIR
-	$(error NGINX_EXTRA_CONFS_DIR is not defined)
 endif
 
 build: check-params
@@ -31,7 +28,7 @@ build: check-params
 	  -e ZONE=$(zone) \
 	  -e IMAGE_NAME_PREFIX=$(IMAGE_NAME_PREFIX) \
 	  -e INGRESS_CONTROLLER_PORT=$(INGRESS_CONTROLLER_PORT) \
-	  -e NGINX_EXTRA_CONFS_DIR="$(NGINX_EXTRA_CONFS_DIR)" \
+	  -e INGRESS_RECEIVER_VERSION="$(INGRESS_RECEIVER_VERSION)" \
 	  -e CERT_DOMAINS="$(certs)" \
 	  -v `pwd`:`pwd` \
 	  -w `pwd` \

@@ -1,0 +1,13 @@
+[Unit]
+Description=Kube-ingwatcher receiver service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/usr/local
+ExecStart=/usr/local/bin/kube-ingwatcher ingressReceiver -p 6565 -t /etc/nginx/nginx.tpl -d /etc/nginx/conf.d -A /usr/local/bin/ingress-add.sh -D /usr/local/bin/ingress-del.sh -p ssl- -s .conf
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
