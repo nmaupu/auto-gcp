@@ -8,6 +8,12 @@ variable "machine_type" {
   description = "Machine type"
 }
 
+variable "allow_stopping_for_update" {
+  type        = "string"
+  description = "Allow stopping instance for updating a property"
+  default = "true"
+}
+
 variable "zone" {
   type        = "string"
   description = "The zone to deploy the instance into"

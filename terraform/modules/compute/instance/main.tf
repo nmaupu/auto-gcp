@@ -3,6 +3,7 @@ resource "google_compute_instance" "default" {
   machine_type = "${var.machine_type}"
   zone         = "${var.zone}"
   project      = "${var.project}"
+  allow_stopping_for_update = "${var.allow_stopping_for_update}"
 
   tags = ["${var.tags}"]
 
