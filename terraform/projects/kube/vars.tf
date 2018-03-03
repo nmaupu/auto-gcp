@@ -10,6 +10,7 @@ variable "cidr" {}
 variable "gke_name" {}
 variable "gke_initial_node_count" {}
 variable "gke_min_master_version" {}
+variable "gke_node_version" {}
 variable "gke_preemptible" {}
 variable "gke_username" {}
 variable "gke_password" {}

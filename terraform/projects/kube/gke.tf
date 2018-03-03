@@ -4,6 +4,7 @@ module "gke" {
   zone               = "${data.google_compute_zones.available.names[0]}"
   additional_zones   = ["${slice(data.google_compute_zones.available.names, 1, length(data.google_compute_zones.available.names) - 1)}"]
   min_master_version = "${var.gke_min_master_version}"
+  node_version       = "${var.gke_node_version}"
   initial_node_count = "${var.gke_initial_node_count}"
   preemptible        = "${var.gke_preemptible}"
   username           = "${var.gke_username}"

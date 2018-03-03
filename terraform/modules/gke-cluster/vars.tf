@@ -23,6 +23,11 @@ variable "min_master_version" {
   description = "Minimal version of the kubernetes cluster"
 }
 
+variable "node_version" {
+  type        = "string"
+  description = "Version of the kubernetes nodes"
+}
+
 variable "username" {
   type        = "string"
   description = "Master username"
