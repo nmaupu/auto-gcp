@@ -1,5 +1,6 @@
 bootstrap-gce/backend.tf
 *.tfstate
+*.tfstate.*.backup
 .terraform/
 *.swp
 *.swo
