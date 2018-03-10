@@ -16,13 +16,13 @@ gke_machine_type = "f1-micro"
 rproxy_pub_name = "rproxy-pub"
 rproxy_pub_machine_type = "f1-micro"
 rproxy_pub_preemptible = "false"
-rproxy_image_pub = "rproxy-pub-2018-01-07t23-27-05z"
+rproxy_image_pub = "rproxy-pub-2018-03-10t19-53-05z"
 
 # public rproxy
 rproxy_priv_name = "rproxy-priv"
 rproxy_priv_machine_type = "f1-micro"
 rproxy_priv_preemptible = "false"
-rproxy_image_priv = "rproxy-priv-2018-01-07t23-30-29z"
+rproxy_image_priv = "rproxy-priv-2018-03-10t19-48-46z"
 
 rproxy_priv_sources = [
   "78.192.25.46/32"
