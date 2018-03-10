@@ -8,7 +8,6 @@ module "rproxy-priv-instance" {
   image        = "${var.rproxy_image_priv}"
   subnetwork   = "${module.subnetwork.self_link}"
   preemptible  = "${var.rproxy_priv_preemptible}"
-  automatic_restart = "false"
 
   service_account_scopes = [
     "userinfo-email",

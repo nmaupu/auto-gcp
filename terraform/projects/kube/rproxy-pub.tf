@@ -7,7 +7,7 @@ module "rproxy-pub-instance" {
   tags         = ["rproxy-pub"]
   image        = "${var.rproxy_image_pub}"
   subnetwork   = "${module.subnetwork.self_link}"
-  preemptible  = "false"
+  preemptible  = "${var.rproxy_pub_preemptible}"
 
   service_account_scopes = [
     "userinfo-email",
