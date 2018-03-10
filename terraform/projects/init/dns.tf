@@ -11,11 +11,11 @@ module "pro_1_MX_records" {
   type         = "MX"
   ttl          = "3600"
   rrdatas = [
-    "1 ASPMX.L.GOOGLE.COM.",
-    "10 ASPMX2.GOOGLEMAIL.COM.",
-    "10 ASPMX3.GOOGLEMAIL.COM.",
-    "5 ALT1.ASPMX.L.GOOGLE.COM.",
-    "5 ALT2.ASPMX.L.GOOGLE.COM.",
+    "1 aspmx.l.google.com.",
+    "10 aspmx2.googlemail.com.",
+    "10 aspmx3.googlemail.com.",
+    "5 alt1.aspmx.l.google.com.",
+    "5 alt2.aspmx.l.google.com.",
   ]
 }
 
