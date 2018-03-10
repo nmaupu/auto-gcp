@@ -40,12 +40,13 @@ module "rproxy-pro-1-dns-record-A" {
   project_id = "${data.terraform_remote_state.projects.kube.project_id}"
 }
 
+# Access to rproxy-priv and rproxy-pub using DNS
 module "rproxy-pub-dns-record-A-internal" {
   source       = "../../modules/dns/record_set"
-  name         = "rproxy.${data.terraform_remote_state.projects.kube.dns_name}"
+  name         = "rproxy-pub.${data.terraform_remote_state.projects.kube.priv_dns_name}"
   type         = "A"
   ttl          = "3600"
-  managed_zone = "${data.terraform_remote_state.projects.kube.managed_zone}"
+  managed_zone = "${data.terraform_remote_state.projects.kube.priv_managed_zone}"
 
   rrdatas = [
     "${module.rproxy-pub-instance.internal_ip}",
@@ -56,7 +57,7 @@ module "rproxy-pub-dns-record-A-internal" {
 
 module "rproxy-priv-dns-record-A-internal" {
   source       = "../../modules/dns/record_set"
-  name         = "rproxy.${data.terraform_remote_state.projects.kube.priv_dns_name}"
+  name         = "rproxy-priv.${data.terraform_remote_state.projects.kube.priv_dns_name}"
   type         = "A"
   ttl          = "3600"
   managed_zone = "${data.terraform_remote_state.projects.kube.priv_managed_zone}"

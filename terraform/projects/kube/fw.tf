@@ -89,3 +89,24 @@ resource "google_compute_firewall" "rproxy-priv-https-rules" {
   target_tags = ["rproxy-priv"]
   project     = "${data.terraform_remote_state.projects.kube.project_id}"
 }
+
+# ingwatcher port from internal networks
+resource "google_compute_firewall" "rproxy-kube-ingwatcher" {
+  name = "rproxy-kube-ingwatcher"
+  network = "${module.network.self_link}"
+
+  source_ranges = [
+    "${module.subnetwork.ip_cidr_range}",
+    "${module.gke.cluster_ipv4_cidr}"
+  ]
+
+  allow {
+    protocol = "tcp"
+    ports = [
+      "${var.ingwatcher_port}",
+    ]
+  }
+
+  target_tags = ["rproxy-priv", "rproxy-pub"]
+  project     = "${data.terraform_remote_state.projects.kube.project_id}"
+}
