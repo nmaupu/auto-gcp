@@ -13,3 +13,6 @@ variable "kube_dns_name" {}
 
 variable "kube_priv_zone_name" {}
 variable "kube_priv_dns_name" {}
+
+variable "kube_pro_1_zone_name" {}
+variable "kube_pro_1_dns_name" {}

@@ -5,7 +5,10 @@ The project content has to be deleted first and only then, the project.
 # Building
 
 ```
-TF_VAR_kube_dns_name = "pub.example.com." TF_VAR_kube_priv_dns_name = "priv.example.com." make
+TF_VAR_kube_dns_name="pub.example.com." \
+TF_VAR_kube_priv_dns_name="priv.example.com." \
+TF_VAR_kube_pro_1_dns_name="pro1.com." \
+make
 ```
 
 This activate DNS api and sometimes, api has not enough time to activate before zones are created and thus terraform fails with an error. Re-run and it should work as expected !

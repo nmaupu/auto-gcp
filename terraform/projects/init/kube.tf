@@ -40,6 +40,13 @@ module "kube_priv_managed_zone" {
   project_id = "${module.kube.project_id}"
 }
 
+module "kube_pro_1_managed_zone" {
+  source     = "../../modules/dns/managed_zone"
+  name       = "${var.kube_pro_1_zone_name}"
+  dns_name   = "${var.kube_pro_1_dns_name}"
+  project_id = "${module.kube.project_id}"
+}
+
 #
 ## Outputs
 #
@@ -55,6 +62,10 @@ output "kube.priv_managed_zone" {
   value = "${module.kube_priv_managed_zone.name}"
 }
 
+output "kube.pro_1_managed_zone" {
+  value = "${module.kube_pro_1_managed_zone.name}"
+}
+
 output "kube.dns_name" {
   value = "${module.kube_managed_zone.dns_name}"
 }
@@ -63,10 +74,18 @@ output "kube.priv_dns_name" {
   value = "${module.kube_priv_managed_zone.dns_name}"
 }
 
+output "kube.pro_1_dns_name" {
+  value = "${module.kube_pro_1_managed_zone.dns_name}"
+}
+
 output "kube.name_servers" {
   value = "${module.kube_managed_zone.name_servers}"
 }
 
 output "kube.priv_name_servers" {
   value = "${module.kube_priv_managed_zone.name_servers}"
+}
+
+output "kube.pro_1_name_servers" {
+  value = "${module.kube_pro_1_managed_zone.name_servers}"
 }
