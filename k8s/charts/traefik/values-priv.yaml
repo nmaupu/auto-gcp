@@ -1,0 +1,37 @@
+replicaCount: 2
+
+image:
+  repository: traefik
+  tag: 1.5.3-alpine
+  pullPolicy: IfNotPresent
+  args:
+    - --web
+    - --kubernetes
+    - --kubernetes.labelselector=lb-type=priv
+
+services:
+  web:
+    type: NodePort
+    port: 80
+    targetPort: 30081
+  admin:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+
+ingress:
+  enabled: true
+  hosts:
+    - traefik-priv.priv.fossar.net
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  labels:
+    lb-type: priv
+
+resources:
+  limits:
+    cpu: 40m
+    memory: 64Mi
+  requests:
+    cpu: 20m
+    memory: 32Mi

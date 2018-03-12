@@ -1,0 +1,18 @@
+replicaCount: 1
+image:
+  repository: docker.io/nmaupu/kube-ingwatcher
+  tag: "1.2"
+  pullPolicy: Always
+ingressSenderArgs:
+  - ingressSender
+  - -l
+  - lb-type=pub
+  - --addr=rproxy-pub.priv.fossar.net
+  - --port=6565
+resources:
+  requests:
+    cpu: 10m
+    memory: 16Mi
+  limits:
+    cpu: 20m
+    memory: 32Mi

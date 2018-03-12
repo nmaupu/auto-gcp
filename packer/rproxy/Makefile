@@ -4,7 +4,7 @@ default: build
 image_builder=hashicorp/packer:1.1.3
 zone=europe-west1-b
 INGRESS_CONTROLLER_PORT ?= 30080
-INGRESS_RECEIVER_VERSION ?= 1.0
+INGRESS_RECEIVER_VERSION ?= 1.2
 
 check-params:
 ifndef PROJECT_ID

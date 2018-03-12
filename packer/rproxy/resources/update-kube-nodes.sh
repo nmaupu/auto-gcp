@@ -10,3 +10,4 @@ for node in ${NODES}; do
 done
 
 systemctl reload nginx
+[ $? -ne 0 ] && systemctl restart nginx

@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A kube-ingwatcher chart
+name: kube-ingwatcher
+version: 1.0

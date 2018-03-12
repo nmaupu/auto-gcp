@@ -20,6 +20,12 @@ module "dns_service" {
   service   = "dns.googleapis.com"
 }
 
+module "monitoring_service" {
+  source      = "../../modules/project_service"
+  project_id = "${module.kube.project_id}"
+  service   = "monitoring.googleapis.com"
+}
+
 module "container_service" {
   source      = "../../modules/project_service"
   project_id = "${module.kube.project_id}"

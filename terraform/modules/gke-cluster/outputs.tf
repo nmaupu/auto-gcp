@@ -34,3 +34,7 @@ output "external_ip" {
 output "instance_group_urls" {
   value = "${google_container_cluster.default.instance_group_urls}"
 }
+
+output "cluster_ipv4_cidr" {
+  value = "${google_container_cluster.default.cluster_ipv4_cidr}"
+}
