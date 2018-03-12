@@ -1,0 +1,32 @@
+rbac:
+  create: false
+
+image: hjacobs/kube-ops-view
+
+ingress:
+  extras:
+    annotations:
+      kubernetes.io/ingress.class: traefik
+    labels:
+      lb-type: priv
+  host: kov.priv.fossar.net
+
+kov:
+  resources:
+    limits:
+     cpu: 40m
+     memory: 92Mi
+    requests:
+     cpu: 20m
+     memory: 64Mi
+
+redis:
+  image: redis
+  tag: 3.2-alpine
+  resources:
+    limits:
+      cpu: 50m
+      memory: 32Mi
+    requests:
+      cpu: 10m
+      memory: 16Mi

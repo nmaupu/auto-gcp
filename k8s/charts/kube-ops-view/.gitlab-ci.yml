@@ -1,0 +1,14 @@
+stages:
+  - build
+  - publish
+
+build:
+  stage: build
+  script: make
+
+publish:tag:
+  stage: publish
+  script:
+    - make release
+  only:
+    - tags

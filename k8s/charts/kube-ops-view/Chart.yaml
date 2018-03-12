@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart to deploy kube-ops-view
+name: kube-ops-view
+version: 0.7.1
