@@ -1,0 +1,77 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "appFullName" . }}-deploy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    k8s-app: {{ template "appName" . }}
+    version: v{{ .Chart.Version }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ template "appName" . }}
+        version: v{{ .Chart.Version }}
+    spec:
+      {{- if .Values.rbac.create }}
+      serviceAccount: {{ template "appFullName" . }}-sa
+      {{- end }}
+      containers:
+      - name: service
+        # see https://github.com/hjacobs/kube-ops-view/releases
+        image: {{ .Values.image }}:{{ .Chart.Version }}
+        args:
+        # remove this option to use built-in memory store
+        - --redis-url=redis://{{ template "appFullName" . }}-redis-svc.{{ .Release.Namespace }}:6379
+        - --debug
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        resources:
+{{ toYaml .Values.kov.resources | indent 10 }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "appFullName" . }}-svc
+  labels:
+    name: {{ template "appFullName" . }}-svc
+    k8s-app: {{ template "appName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    k8s-app: {{ template "appName" . }}
+    version: v{{ .Chart.Version }}
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+
+{{ if .Values.ingress.host -}}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "appFullName" . }}-ing
+  namespace: {{ .Release.Namespace }}
+{{- if .Values.ingress.extras }}
+{{ toYaml .Values.ingress.extras | indent 2 }}
+{{- end }}
+spec:
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - backend:
+          serviceName: {{ template "appFullName" . }}-svc
+          servicePort: 80
+{{- end -}}
