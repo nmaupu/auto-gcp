@@ -15,10 +15,11 @@ ingress-controllers: helm-init
 kube-ops-view: helm-init
 	helm install --namespace kube-system kube-ops-view
 
-mysql: helm-init gke-storage-ssd
+mysql: check-vault helm-init gke-storage-ssd
 	helm install \
 	  --namespace db \
 	  --name mysql \
+	  --set mysqlRootPassword=$(shell vault read -field password secret/gce/mysql) \
 	  --set persistence.storageClass=ssd \
 	  --set persistence.size=2Gi \
 	  --set resources.limits.cpu=200m \
@@ -33,3 +34,6 @@ helm-init:
 gke-storage-ssd:
 	# SSD Storage class
 	kubectl apply -f gke-storage-ssd.yaml
+
+check-vault:
+	@vault list secret >/dev/null 2>&1
