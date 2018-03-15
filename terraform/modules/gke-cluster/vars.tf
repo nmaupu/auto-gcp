@@ -8,11 +8,6 @@ variable "zone" {
   description = "Zone in which to install the cluster"
 }
 
-variable "initial_node_count" {
-  type        = "string"
-  description = "Number of nodes in the cluster"
-}
-
 variable "additional_zones" {
   type        = "list"
   description = "Additional zones for nodes creation"
@@ -48,14 +43,35 @@ variable "subnetwork" {
   description = "Subnetwork to use"
 }
 
-variable "project" {
+variable "node_count" {
   type        = "string"
-  description = "Project to put cluster into"
+  description = "Number of nodes to create per group"
+}
+
+variable "auto_repair" {
+  type        = "string"
+  description = "Activate management auto repair feature"
+}
+
+variable "auto_upgrade" {
+  type        = "string"
+  description = "Activate management auto upgrade feature"
 }
 
 variable "oauth_scopes" {
   type        = "list"
-  description = "oauth scopes to bind to the VM of the cluster"
+  description = "Scopes to associate with created VMs"
+}
+
+variable "machine_type" {
+  type        = "string"
+  default     = "f1-micro"
+  description = "Machine type to create"
+}
+
+variable "project" {
+  type        = "string"
+  description = "Project to put cluster into"
 }
 
 variable "disk_size_gb" {
@@ -63,14 +79,8 @@ variable "disk_size_gb" {
   description = "local disk size"
 }
 
-variable "machine_type" {
-  type        = "string"
-  default     = "f1-micro"
-  description = "Machine type to use"
-}
-
 variable "preemptible" {
   type        = "string"
-  default     = "false"
-  description = "Use preemptible instances as nodes"
+  default     = "true"
+  description = "Specifies whether create VMs are preemptible or not"
 }

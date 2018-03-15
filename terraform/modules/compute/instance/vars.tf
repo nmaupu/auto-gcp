@@ -11,7 +11,7 @@ variable "machine_type" {
 variable "allow_stopping_for_update" {
   type        = "string"
   description = "Allow stopping instance for updating a property"
-  default = "true"
+  default     = "true"
 }
 
 variable "zone" {
@@ -45,13 +45,13 @@ variable "service_account_scopes" {
 }
 
 variable "preemptible" {
-  type = "string"
-  default = "false"
+  type        = "string"
+  default     = "false"
   description = "Is machine a preemptible instance ?"
 }
 
 variable "automatic_restart" {
-  type = "string"
-  default = "true"
+  type        = "string"
+  default     = "true"
   description = "Automatically restart machine is case of google engine's event"
 }

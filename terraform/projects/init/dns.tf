@@ -8,8 +8,9 @@ module "pro_1_MX_records" {
   managed_zone = "${module.kube_pro_1_managed_zone.name}"
   name         = "${module.kube_pro_1_managed_zone.dns_name}"
 
-  type         = "MX"
-  ttl          = "3600"
+  type = "MX"
+  ttl  = "3600"
+
   rrdatas = [
     "1 aspmx.l.google.com.",
     "10 aspmx2.googlemail.com.",
@@ -25,8 +26,9 @@ module "pro_1_TXT_mail_record" {
   managed_zone = "${module.kube_pro_1_managed_zone.name}"
   name         = "${module.kube_pro_1_managed_zone.dns_name}"
 
-  type         = "TXT"
-  ttl          = "10800"
+  type = "TXT"
+  ttl  = "10800"
+
   rrdatas = [
     "\"google-site-verification=AeslZhCyOJu2FLxdQn_b7kApIMXaF1R1KjGr2LiIp2A\"",
   ]

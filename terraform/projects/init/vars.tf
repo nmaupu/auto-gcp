@@ -8,6 +8,7 @@ variable "credentials" {
 
 # Kube project
 variable "kube_project_name" {}
+
 variable "kube_zone_name" {}
 variable "kube_dns_name" {}
 

@@ -8,7 +8,7 @@ resource "google_compute_firewall" "http-default" {
     ports    = ["80"]
   }
 
-  project     = "${data.terraform_remote_state.projects.kube.project_id}"
+  project = "${data.terraform_remote_state.projects.kube.project_id}"
 }
 
 # ping ok from known sources
@@ -47,7 +47,8 @@ resource "google_compute_firewall" "rproxy-http-rules" {
 
   allow {
     protocol = "tcp"
-    ports    = [
+
+    ports = [
       "${var.rproxy_http_port}",
     ]
   }
@@ -63,7 +64,8 @@ resource "google_compute_firewall" "rproxy-pub-https-rules" {
 
   allow {
     protocol = "tcp"
-    ports    = [
+
+    ports = [
       "${var.rproxy_https_port}",
     ]
   }
@@ -81,7 +83,8 @@ resource "google_compute_firewall" "rproxy-priv-https-rules" {
 
   allow {
     protocol = "tcp"
-    ports    = [
+
+    ports = [
       "${var.rproxy_https_port}",
     ]
   }
@@ -92,16 +95,17 @@ resource "google_compute_firewall" "rproxy-priv-https-rules" {
 
 # ingwatcher port from internal networks
 resource "google_compute_firewall" "rproxy-kube-ingwatcher" {
-  name = "rproxy-kube-ingwatcher"
+  name    = "rproxy-kube-ingwatcher"
   network = "${module.network.self_link}"
 
   source_ranges = [
     "${module.subnetwork.ip_cidr_range}",
-    "${module.gke.cluster_ipv4_cidr}"
+    "${module.gke.cluster_ipv4_cidr}",
   ]
 
   allow {
     protocol = "tcp"
+
     ports = [
       "${var.ingwatcher_port}",
     ]

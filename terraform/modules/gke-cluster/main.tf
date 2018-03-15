@@ -1,10 +1,12 @@
 resource "google_container_cluster" "default" {
   name               = "${var.name}"
   zone               = "${var.zone}"
-  initial_node_count = "${var.initial_node_count}"
   additional_zones   = ["${var.additional_zones}"]
   min_master_version = "${var.min_master_version}"
   node_version       = "${var.node_version}"
+
+  # Force RBAC
+  enable_legacy_abac = false
 
   master_auth {
     username = "${var.username}"
@@ -13,22 +15,25 @@ resource "google_container_cluster" "default" {
 
   network    = "${var.network}"
   subnetwork = "${var.subnetwork}"
-  project = "${var.project}"
+  project    = "${var.project}"
 
-  node_config {
-    oauth_scopes = ["${var.oauth_scopes}"]
-    disk_size_gb = "${var.disk_size_gb}"
-    machine_type = "${var.machine_type}"
-    preemptible  = "${var.preemptible}"
+  node_pool = {
+    name       = "default-pool"
+    node_count = "${var.node_count}"
 
-    labels {
-      type               = "kube-node"
-      cluster_name       = "${var.name}"
-      min_master_version = "${var.min_master_version}"
-      project            = "${var.project}"
+    management {
+      auto_repair  = "${var.auto_repair}"
+      auto_upgrade = "${var.auto_upgrade}"
     }
 
-    tags = ["kube-node", "${var.name}"]
+    node_config {
+      oauth_scopes = "${var.oauth_scopes}"
+
+      machine_type = "${var.machine_type}"
+      disk_size_gb = "${var.disk_size_gb}"
+
+      preemptible = "${var.preemptible}"
+    }
   }
 
   addons_config {
@@ -37,6 +42,10 @@ resource "google_container_cluster" "default" {
     }
 
     horizontal_pod_autoscaling {
+      disabled = true
+    }
+
+    kubernetes_dashboard {
       disabled = true
     }
   }

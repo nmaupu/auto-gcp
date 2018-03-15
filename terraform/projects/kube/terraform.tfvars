@@ -7,10 +7,10 @@ cidr = "10.42.42.0/24"
 gke_name = "nma-kube"
 gke_min_master_version = "1.9.3-gke.0"
 gke_node_version = "1.9.3-gke.0"
-gke_initial_node_count = "2"
+gke_node_count = "2"
 gke_preemptible = "true"
 gke_disk_size_gb = "10"
-gke_machine_type = "g1-small"
+gke_machine_type = "n1-standard-1"
 
 # public rproxy
 rproxy_pub_name = "rproxy-pub"

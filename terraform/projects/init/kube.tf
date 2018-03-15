@@ -2,9 +2,9 @@
 # Creating project
 ##
 module "kube" {
-  source = "../../modules/project"
-  project_name = "${var.kube_project_name}"
-  org_id = "${var.org_id}"
+  source          = "../../modules/project"
+  project_name    = "${var.kube_project_name}"
+  org_id          = "${var.org_id}"
   billing_account = "${var.billing_account}"
 }
 
@@ -15,21 +15,21 @@ module "kube_service" {
 }
 
 module "dns_service" {
-  source      = "../../modules/project_service"
+  source     = "../../modules/project_service"
   project_id = "${module.kube.project_id}"
-  service   = "dns.googleapis.com"
+  service    = "dns.googleapis.com"
 }
 
 module "monitoring_service" {
-  source      = "../../modules/project_service"
+  source     = "../../modules/project_service"
   project_id = "${module.kube.project_id}"
-  service   = "monitoring.googleapis.com"
+  service    = "monitoring.googleapis.com"
 }
 
 module "container_service" {
-  source      = "../../modules/project_service"
+  source     = "../../modules/project_service"
   project_id = "${module.kube.project_id}"
-  service   = "container.googleapis.com"
+  service    = "container.googleapis.com"
 }
 
 module "kube_sshkeys" {
