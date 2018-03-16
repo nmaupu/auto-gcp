@@ -8,32 +8,17 @@ resource "google_container_cluster" "default" {
   # Force RBAC
   enable_legacy_abac = false
 
-  master_auth {
-    username = "${var.username}"
-    password = "${var.password}"
-  }
-
   network    = "${var.network}"
   subnetwork = "${var.subnetwork}"
   project    = "${var.project}"
 
+  lifecycle {
+    ignore_changes = ["node_pool"]
+  }
+
   node_pool = {
-    name       = "default-pool"
-    node_count = "${var.node_count}"
-
-    management {
-      auto_repair  = "${var.auto_repair}"
-      auto_upgrade = "${var.auto_upgrade}"
-    }
-
-    node_config {
-      oauth_scopes = "${var.oauth_scopes}"
-
-      machine_type = "${var.machine_type}"
-      disk_size_gb = "${var.disk_size_gb}"
-
-      preemptible = "${var.preemptible}"
-    }
+    name       = "void-pool"
+    node_count = "0"
   }
 
   addons_config {
