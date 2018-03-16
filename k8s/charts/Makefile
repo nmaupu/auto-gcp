@@ -1,18 +1,19 @@
-deploy:
+.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql gke-storage-ssd check-vault
+deploy: helm-init
 	make ingress-watchers
 	make ingress-controllers
 	make kube-ops-view
 	#make mysql
 
-ingress-watchers: helm-init
+ingress-watchers:
 	helm install --namespace kube-system --name ing-pub  -f kube-ingwatcher/values-pub.yaml  kube-ingwatcher
 	helm install --namespace kube-system --name ing-priv -f kube-ingwatcher/values-priv.yaml kube-ingwatcher
 
-ingress-controllers: helm-init
+ingress-controllers:
 	helm install --namespace kube-system --name rp-priv -f traefik/values-priv.yaml traefik
 	helm install --namespace kube-system --name rp-pub  -f traefik/values-pub.yaml  traefik
 
-kube-ops-view: helm-init
+kube-ops-view:
 	helm install --namespace kube-system kube-ops-view
 
 mysql: check-vault helm-init gke-storage-ssd
@@ -30,7 +31,7 @@ mysql: check-vault helm-init gke-storage-ssd
 helm-init:
 	kubectl apply -f tiller-rbac.yaml
 	helm init --upgrade --service-account=tiller
-	sleep 5
+	sleep 8
 
 gke-storage-ssd:
 	# SSD Storage class
