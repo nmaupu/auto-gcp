@@ -7,15 +7,21 @@ variable "network_name" {}
 variable "subnetwork_name" {}
 variable "cidr" {}
 
+## gke related
+# Cluster
 variable "gke_name" {}
-variable "gke_node_count" {}
+
 variable "gke_min_master_version" {}
 variable "gke_node_version" {}
-variable "gke_preemptible" {}
-variable "gke_username" {}
-variable "gke_password" {}
+
+# node pool
+variable "gke_node_count" {}
+
 variable "gke_disk_size_gb" {}
 variable "gke_machine_type" {}
+variable "gke_preemptible" {}
+variable "gke_auto_upgrade" {}
+variable "gke_auto_repair" {}
 
 # public rproxy
 variable "rproxy_pub_name" {}
