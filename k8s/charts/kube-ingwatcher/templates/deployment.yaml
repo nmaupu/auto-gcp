@@ -1,7 +1,9 @@
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: {{ template "kube-ingwatcher.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "kube-ingwatcher.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
@@ -15,6 +17,9 @@ spec:
         app: {{ template "kube-ingwatcher.name" . }}
         release: {{ .Release.Name }}
     spec:
+      {{- if .Values.rbacEnabled }}
+      serviceAccountName: {{ template "kube-ingwatcher.fullname" . }}-sa
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

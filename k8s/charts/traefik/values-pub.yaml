@@ -1,3 +1,4 @@
+rbacEnabled: true
 replicaCount: 2
 
 image:

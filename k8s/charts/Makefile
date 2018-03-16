@@ -28,7 +28,8 @@ mysql: check-vault helm-init gke-storage-ssd
 	  stable/mysql
 
 helm-init:
-	helm init --upgrade
+	kubectl apply -f tiller-rbac.yaml
+	helm init --upgrade --service-account=tiller
 	sleep 5
 
 gke-storage-ssd:
