@@ -3,7 +3,7 @@ deploy: helm-init
 	make ingress-watchers
 	make ingress-controllers
 	make kube-ops-view
-	#make mysql
+	make mysql
 
 ingress-watchers:
 	helm install --namespace kube-system --name ing-pub  -f kube-ingwatcher/values-pub.yaml  kube-ingwatcher
@@ -16,7 +16,7 @@ ingress-controllers:
 kube-ops-view:
 	helm install --namespace kube-system kube-ops-view
 
-mysql: check-vault helm-init gke-storage-ssd
+mysql: check-vault gke-storage-ssd
 	helm install \
 	  --namespace db \
 	  --name mysql \
