@@ -1,4 +1,7 @@
 .PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql gke-storage-ssd check-vault
+
+default: deploy
+
 deploy: helm-init
 	make ingress-watchers
 	make ingress-controllers
@@ -27,6 +30,16 @@ mysql: check-vault gke-storage-ssd
 	  --set resources.requests.memory=128Mi \
 	  --set resources.limits.memory=256Mi \
 	  stable/mysql
+
+dolibarr: gke-storage-ssd
+	helm install \
+	  --namespace tools \
+	  --set ingress.hosts="{$(shell vault read -field appurl secret/gce/mysql-dolibarr)}" \
+	  --set conf.db_host=mysql-mysql.db \
+	  --set conf.db_username=$(shell vault read -field username secret/gce/mysql-dolibarr) \
+	  --set conf.db_password=$(shell vault read -field password secret/gce/mysql-dolibarr) \
+	  --set conf.cookie_key=$(shell vault read -field cookie_key secret/gce/mysql-dolibarr) \
+	  dolibarr
 
 helm-init:
 	kubectl apply -f tiller-rbac.yaml

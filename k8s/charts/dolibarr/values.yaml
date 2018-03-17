@@ -1,0 +1,44 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/nmaupu/dolibarr
+  tag: 6.0.2
+  pullPolicy: Always
+
+service:
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  labels:
+    lb-type: priv
+  path: /
+  hosts:
+    - myhost.example.com
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 200m
+    memory: 128Mi
+
+persistence:
+  enabled: true
+  storageClass: ssd
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  #existingClaim: existing-claim-id
+
+conf:
+  db_host: host
+  db_name: dolibarr
+  db_port: 3306
+  db_prefix: llx_
+  db_username: dolibarr
+  db_password: password
+  db_type: mysqli
+  cookie_key: my_key

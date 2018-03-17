@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "dolibarr.fullname" . }}
+  labels:
+    app: {{ template "dolibarr.name" . }}
+    chart: {{ template "dolibarr.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  conf.php: |
+    <?php
+    $dolibarr_main_url_root='{{ index .Values.ingress.hosts 0 }}';
+    $dolibarr_main_document_root='/var/www/html';
+    $dolibarr_main_data_root='/var/www/html/dolibarr/documents';
+    $dolibarr_main_db_host='{{ .Values.conf.db_host }}';
+    $dolibarr_main_db_port='{{ .Values.conf.db_port }}';
+    $dolibarr_main_db_name='{{ .Values.conf.db_name }}';
+    $dolibarr_main_db_prefix='{{ .Values.conf.db_prefix }}';
+    $dolibarr_main_db_user=getenv('DB_USERNAME');
+    $dolibarr_main_db_pass=getenv('DB_PASSWORD');
+    $dolibarr_main_db_type='{{ .Values.conf.db_type }}';
+    $dolibarr_main_db_character_set='latin1';
+    $dolibarr_main_db_collation='latin1_swedish_ci';
+    $dolibarr_main_authentication='dolibarr';
+    $dolibarr_main_prod='0';
+    $dolibarr_nocsrfcheck='0';
+    $dolibarr_main_force_https='0';
+    $dolibarr_main_cookie_cryptkey=getenv('COOKIE_KEY');
+    $dolibarr_mailing_limit_sendbyweb='0';
+    ?>
