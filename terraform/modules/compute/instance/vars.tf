@@ -55,3 +55,9 @@ variable "automatic_restart" {
   default     = "true"
   description = "Automatically restart machine is case of google engine's event"
 }
+
+variable "on_host_maintenance" {
+  type        = "string"
+  default     = "MIGRATE"
+  description = "MIGRATE or TERMINATE when a maintenance event occurs"
+}

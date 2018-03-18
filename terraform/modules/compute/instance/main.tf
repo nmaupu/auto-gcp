@@ -31,5 +31,6 @@ resource "google_compute_instance" "default" {
   scheduling {
     preemptible       = "${var.preemptible}"
     automatic_restart = "${var.automatic_restart}"
+    on_host_maintenance = "${var.on_host_maintenance}"
   }
 }

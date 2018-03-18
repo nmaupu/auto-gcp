@@ -1,2 +1,2 @@
-* * * * * /usr/local/bin/update-kube-nodes.sh
+*/10 * * * * /usr/local/bin/update-kube-nodes.sh
 0 4 * * * certbot renew
