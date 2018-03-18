@@ -1,7 +1,8 @@
-##
-# Variables
-##
 variable "region" {}
+
+## Backup bucket
+variable "backup_bucket_name" {}
+variable "backup_bucket_storage_class" {}
 
 variable "network_name" {}
 variable "subnetwork_name" {}
@@ -45,3 +46,4 @@ variable "rproxy_http_port" {}
 variable "rproxy_https_port" {}
 variable "rproxy_ssh_port" {}
 variable "ingwatcher_port" {}
+
