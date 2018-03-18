@@ -1,0 +1,30 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-backup-{{ .Values.mysql.database }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: {{ .Values.job.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.job.history.completed }}
+  failedJobsHistoryLimit: {{ .Values.job.history.failed }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: backup
+            image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            command:
+            - /bin/sh
+            args:
+            - -c
+            - /usr/bin/mysqldump -h {{ .Values.mysql.host }} -P {{ (.Values.mysql.port | default "3306") }} --user=root --password=$(MYSQL_PASSWORD) {{ .Values.mysql.database | quote }} | gzip -c | gsutil cp - gs://{{ .Values.bucket }}/mysql/{{ .Values.mysql.database }}/`date +%Y%m%d-%H%M%S`.sql.gz
+            env:
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.key }}

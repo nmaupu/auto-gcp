@@ -1,0 +1,32 @@
+image:
+  repository: docker.io/nmaupu/mysql-client
+  tag: "1.1"
+  pullPolicy: IfNotPresent
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+job:
+  schedule: 59 23 * * *
+  history:
+    completed: 10
+    failed: 10
+
+mysql:
+  host: some-addr
+  database: my-database
+
+bucket: my-backup-bucket
+
+secret:
+  name: secret_name
+  key: mysql-root-password
