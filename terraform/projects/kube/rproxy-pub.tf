@@ -9,9 +9,12 @@ module "rproxy-pub-instance" {
   subnetwork   = "${module.subnetwork.self_link}"
   preemptible  = "${var.rproxy_pub_preemptible}"
 
+  # See for scopes' list:
+  # https://developers.google.com/identity/protocols/googlescopes
   service_account_scopes = [
-    "userinfo-email",
-    "compute-ro",
-    "storage-ro",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/compute.readonly",
+    "https://www.googleapis.com/auth/devstorage.read_only",
+    "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
   ]
 }
