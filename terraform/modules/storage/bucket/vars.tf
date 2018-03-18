@@ -23,3 +23,9 @@ variable "versioning" {
   type        = "string"
   description = "Is this bucket versionned ?"
 }
+
+variable "lifecycle_rule" {
+  type        = "list"
+  default = []
+  description = "Lifecycle rule for this bucket"
+}

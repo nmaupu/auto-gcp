@@ -29,7 +29,7 @@ module "gke-pool-1" {
 
   oauth_scopes = [
     "compute-rw",
-    "storage-ro",
+    "storage-rw",
     "logging-write",
     "monitoring",
   ]

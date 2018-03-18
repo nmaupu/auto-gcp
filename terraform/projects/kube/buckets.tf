@@ -7,4 +7,17 @@ module "backup-bucket" {
   storage_class = "${var.backup_bucket_storage_class}"
 
   versioning = "false"
+
+  # Delete objects older than lifecycle_condition_age days
+  lifecycle_rule = [
+    {
+      condition = [
+        { age = "${var.lifecycle_condition_age}" },
+      ]
+      action = [
+        { type = "Delete" },
+      ]
+    },
+  ]
+
 }

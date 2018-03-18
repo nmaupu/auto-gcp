@@ -2,6 +2,7 @@ region = "europe-west1"
 
 backup_bucket_name = "nma-backup"
 backup_bucket_storage_class = "REGIONAL"
+lifecycle_condition_age = "3"
 
 network_name = "kube-network"
 subnetwork_name = "kube-subnetwork"

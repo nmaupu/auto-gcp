@@ -3,6 +3,7 @@ variable "region" {}
 ## Backup bucket
 variable "backup_bucket_name" {}
 variable "backup_bucket_storage_class" {}
+variable "lifecycle_condition_age" {}
 
 variable "network_name" {}
 variable "subnetwork_name" {}
