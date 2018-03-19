@@ -15,6 +15,7 @@
       "account_file": "{{user `google_creds`}}",
       "project_id": "{{user `project_id`}}",
       "source_image_family": "centos-7",
+	  "image_family": "rproxy",
       "zone": "{{user `zone`}}",
       "image_name": "{{user `image_name_prefix`}}-{{isotime | clean_image_name}}",
       "ssh_username": "centos",
