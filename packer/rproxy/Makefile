@@ -5,6 +5,9 @@ image_builder=hashicorp/packer:1.1.3
 zone=europe-west1-b
 INGRESS_CONTROLLER_PORT ?= 30080
 INGRESS_RECEIVER_VERSION ?= 1.2
+LEGO_VERSION ?= 0.4.1
+# TF_VAR_main_user_account should have been defined when configuring terraform
+LE_EMAIL_ADDRESS ?= $(TF_VAR_main_user_account)
 
 check-params:
 ifndef PROJECT_ID
@@ -16,11 +19,11 @@ endif
 ifndef IMAGE_NAME_PREFIX
 	$(error IMAGE_NAME_PREFIX is not defined)
 endif
+ifndef LE_EMAIL_ADDRESS
+	$(error LE_EMAIL_ADDRESS is not defined)
+endif
 
 build: check-params
-	# Getting all domains to generate a dedicated certificate
-	$(eval certs := $(shell ls -1 $(NGINX_EXTRA_CONFS_DIR) | grep 'ssl-' | sed -e 's/ssl-//' -e 's/.conf$$//'))
-	@echo $(certs)
 	docker run --rm \
 	  -v $(TF_CREDS):/root/.google.json \
 	  -e GOOGLE_APPLICATION_CREDENTIALS=/root/.google.json \
@@ -29,8 +32,15 @@ build: check-params
 	  -e IMAGE_NAME_PREFIX=$(IMAGE_NAME_PREFIX) \
 	  -e INGRESS_CONTROLLER_PORT=$(INGRESS_CONTROLLER_PORT) \
 	  -e INGRESS_RECEIVER_VERSION="$(INGRESS_RECEIVER_VERSION)" \
-	  -e CERT_DOMAINS="$(certs)" \
+	  -e LE_EMAIL_ADDRESS="$(LE_EMAIL_ADDRESS)" \
+	  -e LEGO_VERSION="$(LEGO_VERSION)" \
 	  -v `pwd`:`pwd` \
 	  -w `pwd` \
 	  $(image_builder) \
 	  build packer.json
+
+pub:
+	make build INGRESS_CONTROLLER_PORT=30080 IMAGE_NAME_PREFIX=rproxy-pub
+
+priv:
+	make build INGRESS_CONTROLLER_PORT=30081 IMAGE_NAME_PREFIX=rproxy-priv

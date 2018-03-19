@@ -1,2 +1,2 @@
 */10 * * * * /usr/local/bin/update-kube-nodes.sh
-0 4 * * * certbot renew
+0 6 * * * /usr/local/bin/renew-lego.sh
