@@ -1,3 +1,7 @@
+resource "google_compute_address" "rproxy-pub-addr" {
+  name = "rproxy-pub-addr"
+}
+
 module "rproxy-pub-instance" {
   source       = "../../modules/compute/instance"
   project      = "${data.terraform_remote_state.projects.kube.project_id}"
@@ -8,6 +12,9 @@ module "rproxy-pub-instance" {
   image        = "${var.rproxy_image_pub}"
   subnetwork   = "${module.subnetwork.self_link}"
   preemptible  = "${var.rproxy_pub_preemptible}"
+  access_config = {
+    nat_ip = "${google_compute_address.rproxy-pub-addr.address}"
+  }
 
   # See for scopes' list:
   # https://developers.google.com/identity/protocols/googlescopes

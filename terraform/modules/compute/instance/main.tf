@@ -15,7 +15,7 @@ resource "google_compute_instance" "default" {
 
   network_interface {
     subnetwork    = "${var.subnetwork}"
-    access_config = {}
+    access_config = ["${var.access_config}"]
   }
 
   metadata {

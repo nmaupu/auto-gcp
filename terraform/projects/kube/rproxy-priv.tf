@@ -1,3 +1,7 @@
+resource "google_compute_address" "rproxy-priv-addr" {
+  name = "rproxy-priv-addr"
+}
+
 module "rproxy-priv-instance" {
   source       = "../../modules/compute/instance"
   project      = "${data.terraform_remote_state.projects.kube.project_id}"
@@ -8,6 +12,9 @@ module "rproxy-priv-instance" {
   image        = "${var.rproxy_image_priv}"
   subnetwork   = "${module.subnetwork.self_link}"
   preemptible  = "${var.rproxy_priv_preemptible}"
+  access_config = {
+    nat_ip = "${google_compute_address.rproxy-priv-addr.address}"
+  }
 
   # See for scopes' list:
   # https://developers.google.com/identity/protocols/googlescopes

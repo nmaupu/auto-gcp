@@ -39,6 +39,12 @@ variable "subnetwork" {
   description = "subnetwork to use for that instance"
 }
 
+variable "access_config" {
+  type        = "map"
+  default = {}
+  description = "Access config to use for that instance"
+}
+
 variable "service_account_scopes" {
   type        = "list"
   description = "Scopes to use for this instance"
