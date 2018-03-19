@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sudo systemctl reload nginx
+sudo systemctl restart nginx

@@ -21,4 +21,4 @@ sudo GCE_PROJECT=$(gcloud config list --format 'value(core.project)') \
   ${CMD_DOMS} \
   run
 
-sudo systemctl reload nginx
+sudo systemctl restart nginx
