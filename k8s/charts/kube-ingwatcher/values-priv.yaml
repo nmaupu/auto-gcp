@@ -2,14 +2,14 @@ rbacEnabled: true
 replicaCount: 1
 image:
   repository: docker.io/nmaupu/kube-ingwatcher
-  tag: "1.2"
+  tag: "1.3"
   pullPolicy: Always
 ingressSenderArgs:
   - ingressSender
   - -l
   - lb-type=priv
   - --addr=rproxy-priv.priv.fossar.net
-  - --port=6565
+  - --port=6566
 resources:
   requests:
     cpu: 10m

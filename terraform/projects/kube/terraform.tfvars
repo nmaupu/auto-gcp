@@ -23,13 +23,13 @@ gke_auto_upgrade = "false"
 rproxy_pub_name = "rproxy-pub"
 rproxy_pub_machine_type = "f1-micro"
 rproxy_pub_preemptible = "false"
-rproxy_image_pub = "rproxy-pub-2018-03-19t00-29-35z"
+rproxy_image_pub = "rproxy-pub-2018-03-19t19-22-14z"
 
 # private rproxy
 rproxy_priv_name = "rproxy-priv"
 rproxy_priv_machine_type = "f1-micro"
 rproxy_priv_preemptible = "false"
-rproxy_image_priv = "rproxy-priv-2018-03-19t00-26-26z"
+rproxy_image_priv = "rproxy-priv-2018-03-19t19-22-18z"
 
 rproxy_priv_sources = [
   "78.192.25.46/32"
@@ -38,4 +38,7 @@ rproxy_priv_sources = [
 rproxy_http_port = "80"
 rproxy_https_port = "443"
 rproxy_ssh_port = "22"
-ingwatcher_port = "6565"
+ingwatcher_ports = [
+  "6565",
+  "6566"
+]

@@ -1,4 +1,4 @@
-KUBE_INGWATCHER_VERSION=1.0
+KUBE_INGWATCHER_VERSION=1.3
 
 default: push
 .PHONY: default build tag tag-latest check-docker-hub clean

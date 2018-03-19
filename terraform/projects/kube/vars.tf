@@ -46,5 +46,6 @@ variable "rproxy_priv_sources" {
 variable "rproxy_http_port" {}
 variable "rproxy_https_port" {}
 variable "rproxy_ssh_port" {}
-variable "ingwatcher_port" {}
-
+variable "ingwatcher_ports" {
+  type = "list"
+}

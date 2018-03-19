@@ -4,3 +4,4 @@ bootstrap-gce/backend.tf
 .terraform/
 *.swp
 *.swo
+tmp/

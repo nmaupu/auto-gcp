@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/usr/local
-ExecStart=/usr/local/bin/kube-ingwatcher ingressReceiver -p 6565 -t /etc/nginx/nginx.tpl -d /etc/nginx/conf.d -A /usr/local/bin/ingress-add.sh -D /usr/local/bin/ingress-del.sh -p ssl- -s .conf
+ExecStart=/usr/local/bin/kube-ingwatcher ingressReceiver -p @@INGRESS_RECEIVER_PORT@@ -t /etc/nginx/nginx.tpl -d /etc/nginx/conf.d -A /usr/local/bin/ingress-add.sh -D /usr/local/bin/ingress-del.sh -P ssl- -s .conf
 Restart=on-abort
 
 [Install]

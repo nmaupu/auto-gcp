@@ -106,9 +106,7 @@ resource "google_compute_firewall" "rproxy-kube-ingwatcher" {
   allow {
     protocol = "tcp"
 
-    ports = [
-      "${var.ingwatcher_port}",
-    ]
+    ports = "${var.ingwatcher_ports}"
   }
 
   target_tags = ["rproxy-priv", "rproxy-pub"]
