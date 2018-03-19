@@ -37,15 +37,15 @@ mysql: check-vault gke-storage-ssd
 	  --set resources.limits.cpu=200m \
 	  --set resources.requests.memory=128Mi \
 	  --set resources.limits.memory=256Mi \
-		mysql \
+	  mysql \
 	  stable/mysql
 	helm upgrade --install \
-		--namespace $(DB_NAMESPACE) \
-		--set job.schedule="0 3 * * *" \
-		--set mysql.database=mysql \
-		$(DB_BACKUP_OPTS) \
-		bak-mysql \
-		mysql-backup
+	  --namespace $(DB_NAMESPACE) \
+	  --set job.schedule="0 3 * * *" \
+	  --set mysql.database=mysql \
+	  $(DB_BACKUP_OPTS) \
+	  bak-mysql \
+	  mysql-backup
 
 dolibarr: gke-storage-ssd
 	helm upgrade --install \
@@ -55,15 +55,15 @@ dolibarr: gke-storage-ssd
 	  --set conf.db_username=$(shell vault read -field username secret/gce/mysql-dolibarr) \
 	  --set conf.db_password=$(shell vault read -field password secret/gce/mysql-dolibarr) \
 	  --set conf.cookie_key=$(shell vault read -field cookie_key secret/gce/mysql-dolibarr) \
-		quiet-ragdoll \
+	  quiet-ragdoll \
 	  dolibarr
 	helm upgrade --install \
-	  --namespace tools \
-		--set job.schedule="0 3 * * *" \
-		--set mysql.database=dolibarr \
-		$(DB_BACKUP_OPTS) \
-		bak-dolibarr \
-		mysql-backup
+	  --namespace $(DB_NAMESPACE) \
+	  --set job.schedule="0 4 * * *" \
+	  --set mysql.database=dolibarr \
+	  $(DB_BACKUP_OPTS) \
+	  bak-dolibarr \
+	  mysql-backup
 
 helm-init:
 	kubectl apply -f tiller-rbac.yaml
