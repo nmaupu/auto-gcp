@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/nmaupu/compte
+  tag: "1.2"
+  pullPolicy: IfNotPresent
+
+db:
+  addr: localhost
+  name: compte
+  user: user
+  password: password
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  labels:
+    lb-type: priv
+  host: compte.example.com
+
+resources:
+  limits:
+    cpu: 50m
+    memory: 64Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi

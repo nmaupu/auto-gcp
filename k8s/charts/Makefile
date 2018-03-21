@@ -1,11 +1,11 @@
-.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr gke-storage-ssd check-vault
+.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr compte gke-storage-ssd check-vault
 default: upgrade-all
 
 ## All tasks can install or upgrade if already installed
 
 DB_NAMESPACE     = db
 DB_BACKUP_BUCKET = nma-backup
-DB_BACKUP_OPTS   = --set mysql.host=mysql.mysql.$(DB_NAMESPACE)
+DB_BACKUP_OPTS   = --set mysql.host=mysql-mysql.$(DB_NAMESPACE)
 DB_BACKUP_OPTS  += --set bucket=$(DB_BACKUP_BUCKET)
 DB_BACKUP_OPTS  += --set secret.name=mysql-mysql
 DB_BACKUP_OPTS  += --set secret.key=mysql-root-password
@@ -63,6 +63,25 @@ dolibarr: gke-storage-ssd
 	  --set mysql.database=dolibarr \
 	  $(DB_BACKUP_OPTS) \
 	  bak-dolibarr \
+	  mysql-backup
+
+compte:
+	helm upgrade --install \
+	  --namespace tools \
+	  --set ingress.hosts="{$(shell vault read -field appurl secret/gce/mysql-compte)}" \
+	  --set db.addr=mysql-mysql.$(DB_NAMESPACE) \
+	  --set db.name=compte \
+	  --set db.user=$(shell vault read -field username secret/gce/mysql-compte) \
+	  --set db.password=$(shell vault read -field password secret/gce/mysql-compte) \
+	  --set ingress.host=$(shell vault read -field appurl secret/gce/mysql-compte) \
+	  serene-kepler \
+	  compte
+	helm upgrade --install \
+	  --namespace $(DB_NAMESPACE) \
+	  --set job.schedule="0 1 * * *" \
+	  --set mysql.database=compte \
+	  $(DB_BACKUP_OPTS) \
+	  bak-compte \
 	  mysql-backup
 
 helm-init:
