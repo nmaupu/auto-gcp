@@ -4,7 +4,7 @@ default: push
 .PHONY: default build tag tag-latest check-docker-hub clean
 
 NAME=compte
-VERSION=1.2
+VERSION=1.3
 REMOTE_NAME=$(DOCKER_ID_USER)/$(NAME)
 
 build: check-docker-hub
