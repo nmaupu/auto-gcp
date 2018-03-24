@@ -1,4 +1,4 @@
-.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr compte gke-storage-ssd check-vault
+.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr compte phpmyadmin gke-storage-ssd check-vault
 default: upgrade-all
 
 ## All tasks can install or upgrade if already installed
@@ -16,6 +16,8 @@ upgrade-all: helm-init
 	make kube-ops-view
 	make mysql
 	make dolibarr
+	make compte
+	make phpmyadmin
 
 ingress-watchers:
 	helm upgrade --install --namespace kube-system -f kube-ingwatcher/values-priv.yaml ing-priv kube-ingwatcher
@@ -83,6 +85,13 @@ compte:
 	  $(DB_BACKUP_OPTS) \
 	  bak-compte \
 	  mysql-backup
+
+phpmyadmin:
+	helm upgrade --install \
+	  --namespace tools \
+	  --set pma.host=mysql-mysql.$(DB_NAMESPACE) \
+	  cocky-cori \
+	  phpmyadmin
 
 helm-init:
 	kubectl apply -f tiller-rbac.yaml

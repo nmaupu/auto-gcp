@@ -1,3 +1,11 @@
+resource "google_compute_disk" "rproxy-pub-certs" {
+    project = "${data.terraform_remote_state.projects.kube.project_id}"
+    name = "rproxy-pub-certs"
+    type = "pd-standard"
+    zone = "${data.google_compute_zones.available.names[0]}"
+    size = "1"
+}
+
 resource "google_compute_address" "rproxy-pub-addr" {
   name = "rproxy-pub-addr"
 }
@@ -15,6 +23,10 @@ module "rproxy-pub-instance" {
   access_config = {
     nat_ip = "${google_compute_address.rproxy-pub-addr.address}"
   }
+
+  attached_disk_source = "${google_compute_disk.rproxy-pub-certs.self_link}"
+  attached_disk_device_name = "${google_compute_disk.rproxy-pub-certs.name}"
+  startup_script = "${file("scripts/detect-disk.sh")}"
 
   # See for scopes' list:
   # https://developers.google.com/identity/protocols/googlescopes

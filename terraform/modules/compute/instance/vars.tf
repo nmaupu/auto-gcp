@@ -34,6 +34,22 @@ variable "image" {
   description = "Image associated to this instance"
 }
 
+variable "attached_disk_source" {
+  type        = "string"
+  description = "Disk to attach to the instance"
+}
+
+variable "attached_disk_device_name" {
+  type        = "string"
+  description = "Device name to bind under /dev/disk/by-id/"
+}
+
+variable "startup_script" {
+  type        = "string"
+  default     = ""
+  description = "Script to execute when machine starts"
+}
+
 variable "subnetwork" {
   type        = "string"
   description = "subnetwork to use for that instance"

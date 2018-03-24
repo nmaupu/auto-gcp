@@ -1,0 +1,33 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/phpmyadmin/phpmyadmin
+  tag: "4.7.9-1"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  host: phpmyadmin.priv.fossar.net
+
+extrasLabels:
+  lb-type: priv
+
+resources:
+  limits:
+    cpu: 50m
+    memory: 128Mi
+  requests:
+    cpu: 20m
+    memory: 64Mi
+
+# All PMA_* env vars can be used as so :
+# pma:
+#   host: myhost
+#   port: 3306
+#   ...

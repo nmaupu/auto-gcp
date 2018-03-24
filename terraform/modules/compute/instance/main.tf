@@ -13,15 +13,21 @@ resource "google_compute_instance" "default" {
     }
   }
 
+  attached_disk {
+    source      = "${var.attached_disk_source}"
+    device_name = "${var.attached_disk_device_name}"
+  }
+
   network_interface {
     subnetwork    = "${var.subnetwork}"
     access_config = ["${var.access_config}"]
   }
 
   metadata {
-    machine_type = "${var.machine_type}"
-    name         = "${var.name}"
-    image        = "${var.image}"
+    machine_type   = "${var.machine_type}"
+    name           = "${var.name}"
+    image          = "${var.image}"
+    startup-script = "${var.startup_script}"
   }
 
   service_account {
