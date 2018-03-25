@@ -13,7 +13,7 @@ ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: traefik
-  host: phpmyadmin.priv.fossar.net
+  host: phpmyadmin.example.com
 
 extrasLabels:
   lb-type: priv

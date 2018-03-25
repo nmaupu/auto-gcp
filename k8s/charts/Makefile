@@ -1,7 +1,10 @@
-.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr compte phpmyadmin gke-storage-ssd check-vault
+.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr compte phpmyadmin gke-storage-ssd check-vault check-param-priv1-domain
 default: upgrade-all
 
 ## All tasks can install or upgrade if already installed
+
+## Parameters:
+#    - PRIV1_DOMAIN
 
 DB_NAMESPACE     = db
 DB_BACKUP_BUCKET = nma-backup
@@ -19,16 +22,16 @@ upgrade-all: helm-init
 	make compte
 	make phpmyadmin
 
-ingress-watchers:
-	helm upgrade --install --namespace kube-system -f kube-ingwatcher/values-priv.yaml ing-priv kube-ingwatcher
-	helm upgrade --install --namespace kube-system -f kube-ingwatcher/values-pub.yaml  ing-pub  kube-ingwatcher
+ingress-watchers: check-param-priv1-domain
+	helm upgrade --install --namespace kube-system -f kube-ingwatcher/values-priv.yaml --set target.addr=rproxy-priv.$(PRIV1_DOMAIN) ing-priv kube-ingwatcher
+	helm upgrade --install --namespace kube-system -f kube-ingwatcher/values-pub.yaml  --set target.addr=rproxy-pub.$(PRIV1_DOMAIN)  ing-pub  kube-ingwatcher
 
-ingress-controllers:
-	helm upgrade --install --namespace kube-system -f traefik/values-priv.yaml rp-priv traefik
-	helm upgrade --install --namespace kube-system -f traefik/values-pub.yaml  rp-pub  traefik
+ingress-controllers: check-param-priv1-domain
+	helm upgrade --install --namespace kube-system -f traefik/values-priv.yaml --set ingress.host=traefik-priv.$(PRIV1_DOMAIN) rp-priv traefik
+	helm upgrade --install --namespace kube-system -f traefik/values-pub.yaml  --set ingress.host=traefik-pub.$(PRIV1_DOMAIN)  rp-pub  traefik
 
-kube-ops-view:
-	helm upgrade --install --namespace kube-system romantic-euler kube-ops-view
+kube-ops-view: check-param-priv1-domain
+	helm upgrade --install --namespace kube-system --set ingress.host=kov.$(PRIV1_DOMAIN) romantic-euler kube-ops-view
 
 mysql: check-vault gke-storage-ssd
 	helm upgrade --install \
@@ -67,10 +70,10 @@ dolibarr: gke-storage-ssd
 	  bak-dolibarr \
 	  mysql-backup
 
-compte:
+compte: check-vault
 	helm upgrade --install \
 	  --namespace tools \
-	  --set ingress.hosts="{$(shell vault read -field appurl secret/gce/mysql-compte)}" \
+	  --set ingress.hosts="$(shell vault read -field appurl secret/gce/mysql-compte)" \
 	  --set db.addr=mysql-mysql.$(DB_NAMESPACE) \
 	  --set db.name=compte \
 	  --set db.user=$(shell vault read -field username secret/gce/mysql-compte) \
@@ -86,9 +89,10 @@ compte:
 	  bak-compte \
 	  mysql-backup
 
-phpmyadmin:
+phpmyadmin: check-param-priv1-domain
 	helm upgrade --install \
 	  --namespace tools \
+	  --set ingress.host=phpmyadmin.$(PRIV1_DOMAIN) \
 	  --set pma.host=mysql-mysql.$(DB_NAMESPACE) \
 	  cocky-cori \
 	  phpmyadmin
@@ -104,3 +108,8 @@ gke-storage-ssd:
 
 check-vault:
 	@vault list secret >/dev/null 2>&1
+
+check-param-priv1-domain:
+ifndef PRIV1_DOMAIN
+	$(error Provide PRIV1_DOMAIN as parameter)
+endif

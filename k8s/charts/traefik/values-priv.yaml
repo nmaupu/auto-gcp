@@ -22,8 +22,7 @@ services:
 
 ingress:
   enabled: true
-  hosts:
-    - traefik-priv.priv.fossar.net
+  host: traefik-priv.example.com
   annotations:
     kubernetes.io/ingress.class: traefik
   labels:

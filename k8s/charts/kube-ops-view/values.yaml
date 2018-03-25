@@ -9,7 +9,7 @@ ingress:
       kubernetes.io/ingress.class: traefik
     labels:
       lb-type: priv
-  host: kov.priv.fossar.net
+  host: myhost.example.com
 
 kov:
   resources:
