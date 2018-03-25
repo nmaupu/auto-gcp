@@ -31,10 +31,6 @@ rproxy_priv_machine_type = "f1-micro"
 rproxy_priv_preemptible = "false"
 rproxy_image_priv = "rproxy-priv-2018-03-19t19-22-18z"
 
-rproxy_priv_sources = [
-  "78.192.25.46/32"
-]
-
 rproxy_http_port = "80"
 rproxy_https_port = "443"
 rproxy_ssh_port = "22"

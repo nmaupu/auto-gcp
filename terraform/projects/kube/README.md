@@ -1,9 +1,9 @@
 # Building
 
 ```
-TF_VAR_gke_username=$(vault read -field=username secret/gce/gke) TF_VAR_gke_password=$(vault read -field=password secret/gce/gke) make init
-TF_VAR_gke_username=$(vault read -field=username secret/gce/gke) TF_VAR_gke_password=$(vault read -field=password secret/gce/gke) make plan
-TF_VAR_gke_username=$(vault read -field=username secret/gce/gke) TF_VAR_gke_password=$(vault read -field=password secret/gce/gke) make apply
+make init
+TF_VAR_rproxy_priv_sources='["1.1.1.1/32", "2.2.2.2/32", "3.3.3.3/32"]' make plan
+TF_VAR_rproxy_priv_sources='["1.1.1.1/32", "2.2.2.2/32", "3.3.3.3/32"]' make apply
 ```
 
 # Configuring local kubectl

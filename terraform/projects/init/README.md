@@ -5,9 +5,10 @@ The project content has to be deleted first and only then, the project.
 # Building
 
 ```
-TF_VAR_kube_dns_name="pub.example.com." \
-TF_VAR_kube_priv_dns_name="priv.example.com." \
-TF_VAR_kube_pro_1_dns_name="pro1.com." \
+TF_VAR_kube_pub1_dns_name="pub1.example.com." \
+TF_VAR_kube_priv1_dns_name="priv1.example.com." \
+TF_VAR_kube_pro1_dns_name="pro1.com." \
+TF_VAR_home_ip="0.0.0.0" \
 make
 ```
 
@@ -15,3 +16,8 @@ This activate DNS api and sometimes, api has not enough time to activate before 
 
 To be able to use those domain, you have to register output NS into your registrar.
 Beware: when refreshing zone (recreating for example), NS can change !
+
+Hints:
+pub1 DNS name: `b*****.fr`
+priv1 DNS name: `f*****.net`
+pro1 DNS name: `s*****.fr`
