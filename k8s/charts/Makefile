@@ -106,6 +106,42 @@ gke-storage-ssd:
 	# GKE SSD Storage class
 	kubectl apply -f gke-storage-ssd.yaml
 
+run-mysql-client:
+	kubectl run --rm --namespace $(DB_NAMESPACE) -i --tty mysql-client --image=docker.io/nmaupu/mysql-client:1.1 --overrides=' \
+{ \
+  "apiVersion": "extensions/v1beta1", \
+  "spec": { \
+    "template": { \
+      "spec": { \
+        "containers": [ \
+          { \
+            "name": "mysql-client", \
+            "image": "docker.io/nmaupu/mysql-client:1.1", \
+            "args": [ \
+              "-h", "mysql-mysql.$(DB_NAMESPACE)", "-u", "root", "--password=$$(MYSQL_PASSWORD)" \
+            ], \
+            "stdin": true, \
+            "stdinOnce": true, \
+            "tty": true, \
+            "env": [ \
+              { \
+                "name": "MYSQL_PASSWORD", \
+                "valueFrom": { \
+                  "secretKeyRef": { \
+                    "name": "mysql-mysql", \
+                    "key": "mysql-root-password" \
+                  } \
+                } \
+              } \
+            ] \
+          } \
+        ] \
+      } \
+    } \
+  } \
+} \
+'
+
 check-vault:
 	@vault list secret >/dev/null 2>&1
 
