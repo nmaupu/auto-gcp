@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ .Release.Name }}-backup-{{ .Values.mysql.database }}
+  name: {{ .Release.Name }}-backup-{{ .Values.mysql.database | replace "_" "-" }}
   namespace: {{ .Release.Namespace }}
 spec:
   schedule: {{ .Values.job.schedule | quote }}

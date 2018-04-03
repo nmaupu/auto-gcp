@@ -1,4 +1,4 @@
-.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr compte phpmyadmin gke-storage-ssd check-vault check-param-priv1-domain
+.PHONY: helm-init ingress-watchers ingress-controllers kube-ops-view mysql dolibarr compte phpmyadmin wp-blogvoy run-mysql-client gke-storage-ssd check-vault check-param-priv1-domain
 default: upgrade-all
 
 ## All tasks can install or upgrade if already installed
@@ -21,6 +21,7 @@ upgrade-all: helm-init
 	make dolibarr
 	make compte
 	make phpmyadmin
+	make wp-blogvoy
 
 ingress-watchers: check-param-priv1-domain
 	helm upgrade --install --namespace kube-system -f kube-ingwatcher/values-priv.yaml --set target.addr=rproxy-priv.$(PRIV1_DOMAIN) ing-priv kube-ingwatcher
@@ -96,6 +97,30 @@ phpmyadmin: check-param-priv1-domain
 	  --set pma.host=mysql-mysql.$(DB_NAMESPACE) \
 	  cocky-cori \
 	  phpmyadmin
+
+wp-blogvoy: check-vault
+	$(eval sm_key    := $(shell vault read -field sm_key    secret/gce/wp-plugins/wp-stateless | base64))
+	$(eval sm_bucket := $(shell vault read -field sm_bucket secret/gce/wp-plugins/wp-stateless))
+	$(eval sm_sa     := $(shell gcloud iam service-accounts list --format=json | jq -r '.[].email | match("^wp-stateless.*").string'))
+	helm upgrade --install \
+	  --namespace blog \
+	  --set db.addr=mysql-mysql.$(DB_NAMESPACE) \
+	  --set db.name=wp_blogvoy \
+	  --set db.user=$(shell vault read -field username secret/gce/mysql-wp-blogvoy) \
+	  --set db.password=$(shell vault read -field password secret/gce/mysql-wp-blogvoy) \
+	  --set ingress.hosts={"blog.fossar.net"} \
+		--set wp_plugins.wp_stateless.sm_service_account=$(sm_sa) \
+		--set wp_plugins.wp_stateless.sm_key=$(sm_key) \
+		--set wp_plugins.wp_stateless.sm_bucket=$(sm_bucket) \
+	  boring-elion \
+	  wp-blogvoy
+	helm upgrade --install \
+	  --namespace $(DB_NAMESPACE) \
+	  --set job.schedule="0 4 * * *" \
+	  --set mysql.database=wp_blogvoy \
+	  $(DB_BACKUP_OPTS) \
+	  bak-wp-blogvoy \
+	  mysql-backup
 
 helm-init:
 	kubectl apply -f tiller-rbac.yaml

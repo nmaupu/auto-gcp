@@ -1,0 +1,48 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/nmaupu/wordpress
+  tag: "4.9.4"
+  pullPolicy: Always
+
+db:
+  addr: 127.0.0.1
+  name: wordpress
+  table_prefix: wp_
+  user: my_db_user
+  password: my_db_password
+
+wp_plugins:
+  wp_stateless:
+    sm_mode: stateless
+    sm_service_account: my_service_account
+    sm_key: my_json_key
+    sm_bucket: my_bucket
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  labels:
+    lb-type: priv
+  path: /
+  hosts:
+    - chart-example.local
+
+resources:
+  limits:
+   cpu: 600m
+   memory: 512Mi
+  requests:
+   cpu: 200m
+   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -4,6 +4,9 @@ backup_bucket_name = "nma-backup"
 backup_bucket_storage_class = "REGIONAL"
 lifecycle_condition_age = "60"
 
+blogvoy_bucket_name = "nma-blogvoy"
+blogvoy_bucket_storage_class = "REGIONAL"
+
 network_name = "kube-network"
 subnetwork_name = "kube-subnetwork"
 cidr = "10.42.42.0/24"
