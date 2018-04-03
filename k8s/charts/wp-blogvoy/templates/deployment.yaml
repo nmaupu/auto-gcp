@@ -1,0 +1,86 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "wp-blogvoy.fullname" . }}
+  labels:
+    app: {{ template "wp-blogvoy.name" . }}
+    chart: {{ template "wp-blogvoy.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "wp-blogvoy.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "wp-blogvoy.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: WORDPRESS_DB_HOST
+            value: {{ .Values.db.addr }}
+          - name: WORDPRESS_DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "wp-blogvoy.fullname" . }}
+                key: db-user
+          - name: WORDPRESS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "wp-blogvoy.fullname" . }}
+                key: db-password
+          - name: WORDPRESS_DB_NAME
+            value: {{ .Values.db.name }}
+          - name: WORDPRESS_TABLE_PREFIX
+            value: {{ .Values.db.table_prefix }}
+          # wp-stateless configuration and secret (sm_*)
+          - name: SM_MODE
+            value: {{ .Values.wp_plugins.wp_stateless.sm_mode }}
+          - name: SM_SA_NAME
+            value: {{ .Values.wp_plugins.wp_stateless.sm_service_account }}
+          - name: SM_BUCKET
+            value: {{ .Values.wp_plugins.wp_stateless.sm_bucket }}
+          - name: SM_KEY_JSON
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "wp-blogvoy.fullname" . }}
+                key: sm-key-json
+          - name: WP_STATELESS_MEDIA_HIDE_SETUP_ASSISTANT
+            value: "true"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 100
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 90
+            periodSeconds: 10
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

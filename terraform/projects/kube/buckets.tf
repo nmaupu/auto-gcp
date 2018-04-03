@@ -1,9 +1,9 @@
 module "backup-bucket" {
-  source  = "../../modules/storage/bucket"
+  source = "../../modules/storage/bucket"
 
-  name = "${var.backup_bucket_name}"
-  project = "${data.terraform_remote_state.projects.kube.project_id}"
-  location = "${var.region}"
+  name          = "${var.backup_bucket_name}"
+  project       = "${data.terraform_remote_state.projects.kube.project_id}"
+  location      = "${var.region}"
   storage_class = "${var.backup_bucket_storage_class}"
 
   versioning = "false"
@@ -12,12 +12,28 @@ module "backup-bucket" {
   lifecycle_rule = [
     {
       condition = [
-        { age = "${var.lifecycle_condition_age}" },
+        {
+          age     = "${var.lifecycle_condition_age}"
+          is_live = "true"
+        },
       ]
+
       action = [
-        { type = "Delete" },
+        {
+          type = "Delete"
+        },
       ]
     },
   ]
+}
 
+module "blogvoy-bucket" {
+  source = "../../modules/storage/bucket"
+
+  name          = "${var.blogvoy_bucket_name}"
+  project       = "${data.terraform_remote_state.projects.kube.project_id}"
+  location      = "${var.region}"
+  storage_class = "${var.blogvoy_bucket_storage_class}"
+
+  versioning = "false"
 }

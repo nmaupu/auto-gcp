@@ -2,7 +2,10 @@ region = "europe-west1"
 
 backup_bucket_name = "nma-backup"
 backup_bucket_storage_class = "REGIONAL"
-lifecycle_condition_age = "3"
+lifecycle_condition_age = "60"
+
+blogvoy_bucket_name = "nma-blogvoy"
+blogvoy_bucket_storage_class = "REGIONAL"
 
 network_name = "kube-network"
 subnetwork_name = "kube-subnetwork"
@@ -23,13 +26,13 @@ gke_auto_upgrade = "false"
 rproxy_pub_name = "rproxy-pub"
 rproxy_pub_machine_type = "f1-micro"
 rproxy_pub_preemptible = "false"
-rproxy_image_pub = "rproxy-pub-2018-03-19t19-22-14z"
+rproxy_image_pub = "rproxy-pub-2018-04-01t16-46-21z"
 
 # private rproxy
 rproxy_priv_name = "rproxy-priv"
 rproxy_priv_machine_type = "f1-micro"
 rproxy_priv_preemptible = "false"
-rproxy_image_priv = "rproxy-priv-2018-03-19t19-22-18z"
+rproxy_image_priv = "rproxy-priv-2018-04-01t16-46-39z"
 
 rproxy_http_port = "80"
 rproxy_https_port = "443"

@@ -1,9 +1,9 @@
 resource "google_compute_disk" "rproxy-priv-certs" {
-    project = "${data.terraform_remote_state.projects.kube.project_id}"
-    name = "rproxy-priv-certs"
-    type = "pd-standard"
-    zone = "${data.google_compute_zones.available.names[0]}"
-    size = "1"
+  project = "${data.terraform_remote_state.projects.kube.project_id}"
+  name    = "rproxy-priv-certs"
+  type    = "pd-standard"
+  zone    = "${data.google_compute_zones.available.names[0]}"
+  size    = "1"
 }
 
 resource "google_compute_address" "rproxy-priv-addr" {
@@ -20,13 +20,14 @@ module "rproxy-priv-instance" {
   image        = "${var.rproxy_image_priv}"
   subnetwork   = "${module.subnetwork.self_link}"
   preemptible  = "${var.rproxy_priv_preemptible}"
+
   access_config = {
     nat_ip = "${google_compute_address.rproxy-priv-addr.address}"
   }
 
-  attached_disk_source = "${google_compute_disk.rproxy-priv-certs.self_link}"
+  attached_disk_source      = "${google_compute_disk.rproxy-priv-certs.self_link}"
   attached_disk_device_name = "${google_compute_disk.rproxy-priv-certs.name}"
-  startup_script = "${file("scripts/detect-disk.sh")}"
+  startup_script            = "${file("scripts/detect-disk.sh")}"
 
   # See for scopes' list:
   # https://developers.google.com/identity/protocols/googlescopes
