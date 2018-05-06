@@ -50,3 +50,17 @@ module "home_root_records" {
     "${var.home_ip}"
   ]
 }
+
+module "nas_home_root_records" {
+  source       = "../../modules/dns/record_set"
+  project_id   = "${module.kube.project_id}"
+  managed_zone = "${module.kube_priv1_managed_zone.name}"
+  name         = "nas.home.${module.kube_priv1_managed_zone.dns_name}"
+
+  type = "CNAME"
+  ttl  = "86400"
+
+  rrdatas = [
+    "home.${module.kube_priv1_managed_zone.dns_name}"
+  ]
+}
