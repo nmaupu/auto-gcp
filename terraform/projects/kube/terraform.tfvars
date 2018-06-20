@@ -9,15 +9,15 @@ subnetwork_name = "kube-subnetwork"
 cidr = "10.42.42.0/24"
 
 gke_name = "nma-kube"
-gke_min_master_version = "1.9.4-gke.1"
-gke_node_version = "1.9.4-gke.1"
+gke_min_master_version = "1.10.4-gke.2"
+gke_node_version = "1.10.4-gke.2"
 
 gke_node_count = "2"
 gke_machine_type = "n1-standard-1"
 gke_disk_size_gb = "10"
 gke_preemptible = "true"
 gke_auto_repair = "true"
-gke_auto_upgrade = "false"
+gke_auto_upgrade = "true"
 
 # public rproxy
 rproxy_pub_name = "rproxy-pub"

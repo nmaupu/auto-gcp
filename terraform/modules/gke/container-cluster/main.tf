@@ -13,7 +13,7 @@ resource "google_container_cluster" "default" {
   project    = "${var.project}"
 
   lifecycle {
-    ignore_changes = ["node_pool"]
+    ignore_changes = ["node_pool", "node_version"]
   }
 
   node_pool = {

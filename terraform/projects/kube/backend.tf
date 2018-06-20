@@ -9,5 +9,5 @@ terraform {
     prefix  = "kube.tfstate"
   }
 
-  required_version = "= 0.11.3"
+  required_version = "= 0.11.7"
 }
