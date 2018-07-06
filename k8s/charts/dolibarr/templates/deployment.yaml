@@ -25,14 +25,14 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         readinessProbe:
           httpGet:
-            path: /
-            port: 80
+            path: /robots.txt
+            port: http
           initialDelaySeconds: 15
           periodSeconds: 10
         livenessProbe:
           httpGet:
-            path: /
-            port: 80
+            path: /robots.txt
+            port: http
           initialDelaySeconds: 30
           periodSeconds: 20
         ports:
