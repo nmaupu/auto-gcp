@@ -360,11 +360,11 @@ nodeExporter:
   ##
   resources:
     limits:
-      cpu: 100m
-      memory: 50Mi
-    requests:
       cpu: 50m
       memory: 30Mi
+    requests:
+      cpu: 10m
+      memory: 10Mi
 
   ## Security context to be added to node-exporter pods
   ##
@@ -543,13 +543,13 @@ server:
   ## Prometheus server resource requests and limits
   ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
-  resources: {}
-    # limits:
-    #   cpu: 500m
-    #   memory: 512Mi
-    # requests:
-    #   cpu: 500m
-    #   memory: 512Mi
+  resources:
+    limits:
+      cpu: 50m
+      memory: 800Mi
+    requests:
+      cpu: 10m
+      memory: 512Mi
 
   service:
     annotations: {}
