@@ -9,8 +9,8 @@ subnetwork_name = "kube-subnetwork"
 cidr = "10.42.42.0/24"
 
 gke_name = "nma-kube"
-gke_min_master_version = "1.10.4-gke.2"
-gke_node_version = "1.10.4-gke.2"
+gke_min_master_version = "1.10.7-gke.2"
+gke_node_version = "1.10.7-gke.2"
 
 gke_node_count = "2"
 gke_machine_type = "n1-standard-1"
