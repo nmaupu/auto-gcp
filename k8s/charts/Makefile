@@ -55,6 +55,7 @@ mysql: check-vault gke-storage-ssd
 dolibarr: gke-storage-ssd
 	helm upgrade --install \
 	  --namespace tools \
+	  --set image.tag=8.0.2 \
 	  --set ingress.hosts="{$(shell vault read -field appurl secret/gce/mysql-dolibarr)}" \
 	  --set conf.db_host=mysql-mysql.$(DB_NAMESPACE) \
 	  --set conf.db_username=$(shell vault read -field username secret/gce/mysql-dolibarr) \

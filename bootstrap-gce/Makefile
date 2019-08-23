@@ -74,6 +74,9 @@ roles:
 	gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
 	  --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
 	  --role roles/container.clusterAdmin
+	gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+	  --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
+	  --role roles/storage.admin
 
 roles-destroy:
 	# Not all roles are destroyed !
@@ -101,6 +104,9 @@ roles-destroy:
 	gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
 	  --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
 	  --role roles/container.clusterAdmin
+	gcloud organizations remove-iam-policy-binding ${TF_VAR_org_id} \
+	  --member serviceAccount:terraform@${TF_ADMIN}.iam.gserviceaccount.com \
+	  --role roles/storage.admin
 
 backend.tf:
 	@echo "terraform {" > $@
