@@ -12,6 +12,6 @@ data "terraform_remote_state" "projects" {
 }
 
 ##
-# Kubernetes resource
+# Available zones for kubernetes cluster
 ##
-data "google_compute_zones" "available" {}
+#data "google_compute_zones" "available" {}

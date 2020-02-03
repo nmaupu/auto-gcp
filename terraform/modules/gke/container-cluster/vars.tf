@@ -3,14 +3,9 @@ variable "name" {
   description = "A name for the resource"
 }
 
-variable "zone" {
+variable "location" {
   type        = "string"
-  description = "Zone in which to install the cluster"
-}
-
-variable "additional_zones" {
-  type        = "list"
-  description = "Additional zones for nodes creation"
+  description = "Location in which to install the cluster"
 }
 
 variable "min_master_version" {

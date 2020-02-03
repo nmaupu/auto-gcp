@@ -2,7 +2,7 @@ resource "google_compute_disk" "rproxy-priv-certs" {
     project = "${data.terraform_remote_state.projects.kube.project_id}"
     name = "rproxy-priv-certs"
     type = "pd-standard"
-    zone = "${data.google_compute_zones.available.names[0]}"
+    zone = "europe-west1-b"
     size = "1"
 }
 
@@ -15,7 +15,7 @@ module "rproxy-priv-instance" {
   project      = "${data.terraform_remote_state.projects.kube.project_id}"
   name         = "${var.rproxy_priv_name}"
   machine_type = "${var.rproxy_priv_machine_type}"
-  zone         = "${data.google_compute_zones.available.names[0]}"
+	zone         = "europe-west1-b"
   tags         = ["rproxy-priv"]
   image        = "${var.rproxy_image_priv}"
   subnetwork   = "${module.subnetwork.self_link}"

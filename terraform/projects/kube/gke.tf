@@ -1,11 +1,8 @@
 module "gke" {
-  source  = "../../modules/gke/container-cluster"
-  project = "${data.terraform_remote_state.projects.kube.project_id}"
-  name    = "${var.gke_name}"
-  zone    = "${data.google_compute_zones.available.names[0]}"
-
-
-  additional_zones = ["${slice(data.google_compute_zones.available.names, 1, 2)}"]
+  source   = "../../modules/gke/container-cluster"
+  project  = "${data.terraform_remote_state.projects.kube.project_id}"
+  name     = "${var.gke_name}"
+  location = "${var.region}"
 
   min_master_version = "${var.gke_min_master_version}"
   node_version       = "${var.gke_node_version}"
@@ -22,7 +19,7 @@ module "gke-pool-1" {
   source       = "../../modules/gke/node-pool"
   project      = "${data.terraform_remote_state.projects.kube.project_id}"
   name_prefix  = "np"
-  zone         = "${data.google_compute_zones.available.names[0]}"
+  location     = "${var.region}"
   cluster      = "${module.gke.name}"
   node_count   = "${var.gke_node_count}"
   machine_type = "${var.gke_machine_type}"

@@ -8,9 +8,9 @@ variable "name_prefix" {
   description = "A name prefix for the resource"
 }
 
-variable "zone" {
+variable "location" {
   type        = "string"
-  description = "Zone corresponding to the parent cluster"
+  description = "Location corresponding to the parent cluster"
 }
 
 variable "cluster" {

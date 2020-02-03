@@ -13,8 +13,8 @@ module "backup-bucket" {
     {
       condition = [
         {
-          age     = "${var.lifecycle_condition_age}"
-          is_live = "true"
+          age        = "${var.lifecycle_condition_age}"
+          with_state = "LIVE"
         },
       ]
 

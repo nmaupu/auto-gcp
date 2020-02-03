@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-NODES=$(gcloud compute instances list --filter="gke-*" --format=json | jq -r '.[].networkInterfaces | .[].networkIP')
+NODES=$(gcloud compute instances list --filter "Name:gke-*" --format=json | jq -r '.[].networkInterfaces | .[].networkIP')
 PORT=@@PORT@@
 FILE=/etc/nginx/kube-nodes.inc
 

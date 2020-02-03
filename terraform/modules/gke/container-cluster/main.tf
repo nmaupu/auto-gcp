@@ -1,7 +1,7 @@
 resource "google_container_cluster" "default" {
   name               = "${var.name}"
-  zone               = "${var.zone}"
-  additional_zones   = ["${var.additional_zones}"]
+  location           = "${var.location}"
+  node_locations     = ["${var.location}-b", "${var.location}-c"]
   min_master_version = "${var.min_master_version}"
   node_version       = "${var.node_version}"
 
@@ -27,10 +27,6 @@ resource "google_container_cluster" "default" {
     }
 
     horizontal_pod_autoscaling {
-      disabled = true
-    }
-
-    kubernetes_dashboard {
       disabled = true
     }
   }

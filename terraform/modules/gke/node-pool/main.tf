@@ -1,7 +1,7 @@
 resource "google_container_node_pool" "default" {
   project     = "${var.project}"
   name_prefix = "${var.name_prefix}-"
-  zone        = "${var.zone}"
+  location    = "${var.location}"
   cluster     = "${var.cluster}"
   node_count  = "${var.node_count}"
 
