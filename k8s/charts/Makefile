@@ -34,9 +34,9 @@ ingress-controllers: check-param-priv1-domain
 	helm upgrade --install --namespace kube-system -f traefik/values-priv.yaml --set ingress.host=traefik-priv.$(PRIV1_DOMAIN) rp-priv traefik
 	helm upgrade --install --namespace kube-system -f traefik/values-pub.yaml  --set ingress.host=traefik-pub.$(PRIV1_DOMAIN)  rp-pub  traefik
 
-.PHONY: kube-ops-view
-kube-ops-view: check-param-priv1-domain
-	helm upgrade --install --namespace kube-system --set ingress.host=kov.$(PRIV1_DOMAIN) romantic-euler kube-ops-view
+#.PHONY: kube-ops-view
+#kube-ops-view: check-param-priv1-domain
+#	helm upgrade --install --namespace kube-system --set ingress.host=kov.$(PRIV1_DOMAIN) romantic-euler kube-ops-view
 
 .PHONY: mysql
 mysql: check-vault gke-storage-ssd

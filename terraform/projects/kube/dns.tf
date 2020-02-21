@@ -28,13 +28,27 @@ module "rproxy-priv1-dns-record-A" {
 
 module "rproxy-pro1-dns-record-A" {
   source       = "../../modules/dns/record_set"
-  name         = "*.${data.terraform_remote_state.projects.kube.pro1_dns_name}"
+  name         = "*.priv.${data.terraform_remote_state.projects.kube.pro1_dns_name}"
   type         = "A"
   ttl          = "86400"
   managed_zone = "${data.terraform_remote_state.projects.kube.pro1_managed_zone}"
 
   rrdatas = [
     "${module.rproxy-priv-instance.nat_ip}",
+  ]
+
+  project_id = "${data.terraform_remote_state.projects.kube.project_id}"
+}
+
+module "rproxy-pro1-dns-record-A-pub" {
+  source       = "../../modules/dns/record_set"
+  name         = "*.pub.${data.terraform_remote_state.projects.kube.pro1_dns_name}"
+  type         = "A"
+  ttl          = "86400"
+  managed_zone = "${data.terraform_remote_state.projects.kube.pro1_managed_zone}"
+
+  rrdatas = [
+    "${module.rproxy-pub-instance.nat_ip}",
   ]
 
   project_id = "${data.terraform_remote_state.projects.kube.project_id}"

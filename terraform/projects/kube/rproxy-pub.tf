@@ -1,9 +1,9 @@
 resource "google_compute_disk" "rproxy-pub-certs" {
-    project = "${data.terraform_remote_state.projects.kube.project_id}"
-    name = "rproxy-pub-certs"
-    type = "pd-standard"
-		zone = "europe-west1-b"
-    size = "1"
+  project = "${data.terraform_remote_state.projects.kube.project_id}"
+  name = "rproxy-pub-certs"
+  type = "pd-standard"
+  zone = "europe-west1-b"
+  size = "1"
 }
 
 resource "google_compute_address" "rproxy-pub-addr" {

@@ -15,7 +15,7 @@ module "rproxy-priv-instance" {
   project      = "${data.terraform_remote_state.projects.kube.project_id}"
   name         = "${var.rproxy_priv_name}"
   machine_type = "${var.rproxy_priv_machine_type}"
-	zone         = "europe-west1-b"
+  zone         = "europe-west1-b"
   tags         = ["rproxy-priv"]
   image        = "${var.rproxy_image_priv}"
   subnetwork   = "${module.subnetwork.self_link}"

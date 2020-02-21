@@ -24,13 +24,13 @@ gke_auto_upgrade = "true"
 rproxy_pub_name = "rproxy-pub"
 rproxy_pub_machine_type = "f1-micro"
 rproxy_pub_preemptible = "false"
-rproxy_image_pub = "rproxy-pub-2020-02-03t00-34-48z"
+rproxy_image_pub = "rproxy-pub-2020-02-21t17-11-32z"
 
 # private rproxy
 rproxy_priv_name = "rproxy-priv"
 rproxy_priv_machine_type = "f1-micro"
 rproxy_priv_preemptible = "false"
-rproxy_image_priv = "rproxy-priv-2020-02-03t00-35-51z"
+rproxy_image_priv = "rproxy-priv-2020-02-21t17-02-21z"
 
 rproxy_http_port = "80"
 rproxy_https_port = "443"
