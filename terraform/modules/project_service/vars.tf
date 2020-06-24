@@ -1,9 +1,10 @@
 variable "project_id" {
-  type        = "string"
+  type        = string
   description = "Project ID"
 }
 
 variable "service" {
-  type        = "string"
+  type        = string
   description = "service name (use gcloud service-management list to get a list of services)"
 }
+

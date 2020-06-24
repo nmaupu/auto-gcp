@@ -1,22 +1,25 @@
 resource "google_container_cluster" "default" {
-  name               = "${var.name}"
-  location           = "${var.location}"
+  name               = var.name
+  location           = var.location
   node_locations     = ["${var.location}-b", "${var.location}-c"]
-  min_master_version = "${var.min_master_version}"
-  node_version       = "${var.node_version}"
+  min_master_version = var.min_master_version
+  node_version       = var.node_version
 
   # Force RBAC
   enable_legacy_abac = false
 
-  network    = "${var.network}"
-  subnetwork = "${var.subnetwork}"
-  project    = "${var.project}"
+  network    = var.network
+  subnetwork = var.subnetwork
+  project    = var.project
 
   lifecycle {
-    ignore_changes = ["node_pool", "node_version"]
+    ignore_changes = [
+      node_pool,
+      node_version,
+    ]
   }
 
-  node_pool = {
+  node_pool {
     name       = "void-pool"
     node_count = "0"
   }
@@ -37,3 +40,4 @@ resource "google_container_cluster" "default" {
     }
   }
 }
+

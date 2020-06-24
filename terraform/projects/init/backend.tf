@@ -1,13 +1,13 @@
 provider "google" {
-  region = "${var.region}"
+  region = var.region
 }
 
 terraform {
   backend "gcs" {
     bucket  = "nma-terraform"
-    project = "nma-terraform"
     prefix  = "projects.tfstate"
   }
 
-  required_version = "< 0.12"
+  required_version = ">= 0.12"
 }
+

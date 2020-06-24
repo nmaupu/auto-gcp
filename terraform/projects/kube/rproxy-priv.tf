@@ -1,9 +1,9 @@
 resource "google_compute_disk" "rproxy-priv-certs" {
-    project = "${data.terraform_remote_state.projects.kube.project_id}"
-    name = "rproxy-priv-certs"
-    type = "pd-standard"
-    zone = "europe-west1-b"
-    size = "1"
+  project = data.terraform_remote_state.projects.outputs.kube_project_id
+  name    = "rproxy-priv-certs"
+  type    = "pd-standard"
+  zone    = "europe-west1-b"
+  size    = "1"
 }
 
 resource "google_compute_address" "rproxy-priv-addr" {
@@ -12,21 +12,21 @@ resource "google_compute_address" "rproxy-priv-addr" {
 
 module "rproxy-priv-instance" {
   source       = "../../modules/compute/instance"
-  project      = "${data.terraform_remote_state.projects.kube.project_id}"
-  name         = "${var.rproxy_priv_name}"
-  machine_type = "${var.rproxy_priv_machine_type}"
+  project      = data.terraform_remote_state.projects.outputs.kube_project_id
+  name         = var.rproxy_priv_name
+  machine_type = var.rproxy_priv_machine_type
   zone         = "europe-west1-b"
   tags         = ["rproxy-priv"]
-  image        = "${var.rproxy_image_priv}"
-  subnetwork   = "${module.subnetwork.self_link}"
-  preemptible  = "${var.rproxy_priv_preemptible}"
+  image        = var.rproxy_image_priv
+  subnetwork   = module.subnetwork.self_link
+  preemptible  = var.rproxy_priv_preemptible
   access_config = {
-    nat_ip = "${google_compute_address.rproxy-priv-addr.address}"
+    nat_ip = google_compute_address.rproxy-priv-addr.address
   }
 
-  attached_disk_source = "${google_compute_disk.rproxy-priv-certs.self_link}"
-  attached_disk_device_name = "${google_compute_disk.rproxy-priv-certs.name}"
-  startup_script = "${file("scripts/detect-disk.sh")}"
+  attached_disk_source      = google_compute_disk.rproxy-priv-certs.self_link
+  attached_disk_device_name = google_compute_disk.rproxy-priv-certs.name
+  startup_script            = file("scripts/detect-disk.sh")
 
   # See for scopes' list:
   # https://developers.google.com/identity/protocols/googlescopes
@@ -37,3 +37,4 @@ module "rproxy-priv-instance" {
     "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
   ]
 }
+

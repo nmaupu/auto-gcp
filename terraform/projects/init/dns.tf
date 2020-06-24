@@ -4,9 +4,9 @@
 
 module "pro1_MX_records" {
   source       = "../../modules/dns/record_set"
-  project_id   = "${module.kube.project_id}"
-  managed_zone = "${module.kube_pro1_managed_zone.name}"
-  name         = "${module.kube_pro1_managed_zone.dns_name}"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_pro1_managed_zone.name
+  name         = module.kube_pro1_managed_zone.dns_name
 
   type = "MX"
   ttl  = "3600"
@@ -22,9 +22,9 @@ module "pro1_MX_records" {
 
 module "pro1_TXT_mail_record" {
   source       = "../../modules/dns/record_set"
-  project_id   = "${module.kube.project_id}"
-  managed_zone = "${module.kube_pro1_managed_zone.name}"
-  name         = "${module.kube_pro1_managed_zone.dns_name}"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_pro1_managed_zone.name
+  name         = module.kube_pro1_managed_zone.dns_name
 
   type = "TXT"
   ttl  = "10800"
@@ -39,42 +39,43 @@ module "pro1_TXT_mail_record" {
 #
 module "home_root_records" {
   source       = "../../modules/dns/record_set"
-  project_id   = "${module.kube.project_id}"
-  managed_zone = "${module.kube_priv1_managed_zone.name}"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_priv1_managed_zone.name
   name         = "home.${module.kube_priv1_managed_zone.dns_name}"
 
   type = "A"
   ttl  = "86400"
 
   rrdatas = [
-    "${var.home_ip}"
+    var.home_ip,
   ]
 }
 
 module "nas_home_root_records" {
   source       = "../../modules/dns/record_set"
-  project_id   = "${module.kube.project_id}"
-  managed_zone = "${module.kube_priv1_managed_zone.name}"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_priv1_managed_zone.name
   name         = "nas.home.${module.kube_priv1_managed_zone.dns_name}"
 
   type = "CNAME"
   ttl  = "86400"
 
   rrdatas = [
-    "home.${module.kube_priv1_managed_zone.dns_name}"
+    "home.${module.kube_priv1_managed_zone.dns_name}",
   ]
 }
 
 module "hass_home_root_records" {
   source       = "../../modules/dns/record_set"
-  project_id   = "${module.kube.project_id}"
-  managed_zone = "${module.kube_priv1_managed_zone.name}"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_priv1_managed_zone.name
   name         = "hass.home.${module.kube_priv1_managed_zone.dns_name}"
 
   type = "CNAME"
   ttl  = "86400"
 
   rrdatas = [
-    "home.${module.kube_priv1_managed_zone.dns_name}"
+    "home.${module.kube_priv1_managed_zone.dns_name}",
   ]
 }
+

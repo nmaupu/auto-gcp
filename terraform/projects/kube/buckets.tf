@@ -1,28 +1,22 @@
-module "backup-bucket" {
-  source = "../../modules/storage/bucket"
+resource "google_storage_bucket" "default" {
+  name          = var.backup_bucket_name
+  location      = var.region
+  storage_class = var.backup_bucket_storage_class
+  project = data.terraform_remote_state.projects.outputs.kube_project_id
 
-  name          = "${var.backup_bucket_name}"
-  project       = "${data.terraform_remote_state.projects.kube.project_id}"
-  location      = "${var.region}"
-  storage_class = "${var.backup_bucket_storage_class}"
-
-  versioning = "false"
+  versioning {
+    enabled = false
+  }
 
   # Delete objects older than lifecycle_condition_age days
-  lifecycle_rule = [
-    {
-      condition = [
-        {
-          age        = "${var.lifecycle_condition_age}"
+  lifecycle_rule {
+      condition {
+          age        = var.lifecycle_condition_age
           with_state = "LIVE"
-        },
-      ]
+        }
 
-      action = [
-        {
+      action {
           type = "Delete"
-        },
-      ]
-    },
-  ]
+        }
+  }
 }
