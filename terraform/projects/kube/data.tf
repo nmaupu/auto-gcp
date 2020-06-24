@@ -5,8 +5,8 @@ data "terraform_remote_state" "projects" {
   backend = "gcs"
 
   config = {
-    bucket  = "nma-terraform"
-    prefix  = "projects.tfstate"
+    bucket = "nma-terraform"
+    prefix = "projects.tfstate"
     #project = "nma-terraform"
   }
 }

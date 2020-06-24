@@ -4,8 +4,8 @@ provider "google" {
 
 terraform {
   backend "gcs" {
-    bucket  = "nma-terraform"
-    prefix  = "kube.tfstate"
+    bucket = "nma-terraform"
+    prefix = "kube.tfstate"
   }
 }
 
