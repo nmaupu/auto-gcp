@@ -1,7 +1,8 @@
 resource "google_container_cluster" "default" {
   name               = var.name
   location           = var.location
-  node_locations     = ["${var.location}-b", "${var.location}-c"]
+  # Used instead of legacy additional_zones
+  node_locations     = ["${var.location}-c"]
   min_master_version = var.min_master_version
   node_version       = var.node_version
 
