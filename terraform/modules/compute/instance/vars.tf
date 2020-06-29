@@ -80,7 +80,7 @@ variable "automatic_restart" {
 
 variable "on_host_maintenance" {
   type        = string
-  default     = "MIGRATE"
+  default     = "TERMINATE"
   description = "MIGRATE or TERMINATE when a maintenance event occurs"
 }
 

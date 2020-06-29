@@ -8,6 +8,8 @@ resource "google_compute_disk" "rproxy-priv-certs" {
 
 resource "google_compute_address" "rproxy-priv-addr" {
   name = "rproxy-priv-addr"
+  network_tier = var.rproxy_priv_network_tier
+  project      = data.terraform_remote_state.projects.outputs.kube_project_id
 }
 
 module "rproxy-priv-instance" {
@@ -22,6 +24,7 @@ module "rproxy-priv-instance" {
   preemptible  = var.rproxy_priv_preemptible
   access_config = {
     nat_ip = google_compute_address.rproxy-priv-addr.address
+    network_tier = var.rproxy_priv_network_tier
   }
 
   attached_disk_source      = google_compute_disk.rproxy-priv-certs.self_link

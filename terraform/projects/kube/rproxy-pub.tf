@@ -8,6 +8,8 @@ resource "google_compute_disk" "rproxy-pub-certs" {
 
 resource "google_compute_address" "rproxy-pub-addr" {
   name = "rproxy-pub-addr"
+  network_tier = var.rproxy_pub_network_tier
+  project      = data.terraform_remote_state.projects.outputs.kube_project_id
 }
 
 module "rproxy-pub-instance" {
@@ -22,6 +24,7 @@ module "rproxy-pub-instance" {
   preemptible  = var.rproxy_pub_preemptible
   access_config = {
     nat_ip = google_compute_address.rproxy-pub-addr.address
+    network_tier = var.rproxy_pub_network_tier
   }
 
   attached_disk_source      = google_compute_disk.rproxy-pub-certs.self_link
@@ -37,4 +40,3 @@ module "rproxy-pub-instance" {
     "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
   ]
 }
-

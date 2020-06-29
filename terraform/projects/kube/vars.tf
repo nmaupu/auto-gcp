@@ -60,6 +60,9 @@ variable "rproxy_pub_machine_type" {
 variable "rproxy_pub_preemptible" {
 }
 
+variable "rproxy_pub_network_tier" {
+}
+
 variable "rproxy_image_pub" {
 }
 
@@ -71,6 +74,9 @@ variable "rproxy_priv_machine_type" {
 }
 
 variable "rproxy_priv_preemptible" {
+}
+
+variable "rproxy_priv_network_tier" {
 }
 
 variable "rproxy_image_priv" {
