@@ -16,6 +16,7 @@ resources: {}
   #  memory: 128Mi
 
 job:
+  startingDeadlineSeconds: 300
   schedule: 59 23 * * *
   history:
     completed: 10

@@ -4,6 +4,7 @@ metadata:
   name: {{ .Release.Name }}-backup-{{ .Values.mysql.database }}
   namespace: {{ .Release.Namespace }}
 spec:
+  startingDeadlineSeconds: {{ .Values.job.startingDeadlineSeconds }}
   schedule: {{ .Values.job.schedule | quote }}
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: {{ .Values.job.history.completed }}

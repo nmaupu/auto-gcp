@@ -22,6 +22,7 @@ module "rproxy-pub-instance" {
   image        = var.rproxy_image_pub
   subnetwork   = module.subnetwork.self_link
   preemptible  = var.rproxy_pub_preemptible
+  on_host_maintenance = var.rproxy_pub_on_host_maintenance
   access_config = {
     nat_ip = google_compute_address.rproxy-pub-addr.address
     network_tier = var.rproxy_pub_network_tier

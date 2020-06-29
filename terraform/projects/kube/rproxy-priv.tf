@@ -22,6 +22,7 @@ module "rproxy-priv-instance" {
   image        = var.rproxy_image_priv
   subnetwork   = module.subnetwork.self_link
   preemptible  = var.rproxy_priv_preemptible
+  on_host_maintenance = var.rproxy_priv_on_host_maintenance
   access_config = {
     nat_ip = google_compute_address.rproxy-priv-addr.address
     network_tier = var.rproxy_priv_network_tier

@@ -22,16 +22,18 @@ gke_auto_upgrade = "true"
 
 # public rproxy
 rproxy_pub_name         = "rproxy-pub"
-rproxy_pub_machine_type = "e2-micro"
-rproxy_pub_preemptible  = "true"
+rproxy_pub_machine_type = "f1-micro"
+rproxy_pub_preemptible  = "false"
 rproxy_pub_network_tier = "STANDARD"
+rproxy_pub_on_host_maintenance = "MIGRATE"
 rproxy_image_pub        = "rproxy-pub-2020-02-21t17-11-32z"
 
 # private rproxy
 rproxy_priv_name         = "rproxy-priv"
-rproxy_priv_machine_type = "e2-micro"
-rproxy_priv_preemptible  = "true"
+rproxy_priv_machine_type = "f1-micro"
+rproxy_priv_preemptible  = "false"
 rproxy_priv_network_tier = "STANDARD"
+rproxy_priv_on_host_maintenance = "MIGRATE"
 rproxy_image_priv        = "rproxy-priv-2020-02-21t17-02-21z"
 
 rproxy_http_port  = "80"

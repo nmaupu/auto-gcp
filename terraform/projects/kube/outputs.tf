@@ -21,4 +21,3 @@ output "gke_cluster_ca_certificate" {
 output "gke_master_version" {
   value = module.gke.master_version
 }
-
