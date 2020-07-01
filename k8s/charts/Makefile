@@ -15,7 +15,7 @@ DB_BACKUP_OPTS  += --set secret.key=mysql-root-password
 default: upgrade-all
 
 .PHONY: upgrade-all
-upgrade-all: helm-init
+upgrade-all:
 	make ingress-watchers
 	make ingress-controllers
 	make kube-ops-view
@@ -39,7 +39,7 @@ ingress-controllers: check-param-priv1-domain
 #	helm upgrade --install --namespace kube-system --set ingress.host=kov.$(PRIV1_DOMAIN) romantic-euler kube-ops-view
 
 .PHONY: mysql
-mysql: check-vault gke-storage-ssd
+mysql: check-vault gke-storage-ssd ns-db
 	helm upgrade --install \
 	  --namespace $(DB_NAMESPACE) \
 	  --set mysqlRootPassword=$(shell vault read -field password secret/gce/mysql) \
@@ -59,7 +59,7 @@ mysql: check-vault gke-storage-ssd
 	  mysql-backup
 
 .PHONY: dolibarr
-dolibarr: gke-storage-ssd
+dolibarr: gke-storage-ssd ns-tools ns-db
 	helm upgrade --install \
 	  --namespace tools \
 	  --set image.tag=8.0.2 \
@@ -79,7 +79,7 @@ dolibarr: gke-storage-ssd
 	  mysql-backup
 
 .PHONY: compte
-compte: check-vault
+compte: check-vault ns-tools ns-db
 	helm upgrade --install \
 	  --namespace tools \
 	  --set ingress.hosts="$(shell vault read -field appurl secret/gce/mysql-compte)" \
@@ -99,7 +99,7 @@ compte: check-vault
 	  mysql-backup
 
 .PHONY: phpmyadmin
-phpmyadmin: check-param-priv1-domain
+phpmyadmin: check-param-priv1-domain ns-tools
 	helm upgrade --install \
 	  --namespace tools \
 	  --set ingress.host=phpmyadmin.$(PRIV1_DOMAIN) \
@@ -107,16 +107,24 @@ phpmyadmin: check-param-priv1-domain
 	  cocky-cori \
 	  phpmyadmin
 
-.PHONY: helm-init
-helm-init:
-	kubectl apply -f tiller-rbac.yaml
-	helm init --upgrade --service-account=tiller
-	sleep 8
+#.PHONY: helm-init
+#helm-init:
+#	kubectl apply -f tiller-rbac.yaml
+#	helm init --upgrade --service-account=tiller
+#	sleep 8
 
 .PHONY: gke-storage-ssd
 gke-storage-ssd:
 	# GKE SSD Storage class
 	kubectl apply -f gke-storage-ssd.yaml
+
+.PHONY: ns-tools
+ns-tools:
+	kubectl create ns tools || true
+
+.PHONY: ns-db
+ns-db:
+	kubectl create ns $(DB_NAMESPACE) || true
 
 .PHONY: run-mysql-client
 run-mysql-client:

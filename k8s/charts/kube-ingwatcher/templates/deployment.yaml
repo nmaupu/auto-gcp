@@ -1,5 +1,5 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "kube-ingwatcher.fullname" . }}
@@ -11,6 +11,10 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "kube-ingwatcher.name" . }}
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

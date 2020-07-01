@@ -2,7 +2,8 @@ module "gke" {
   source   = "../../modules/gke/container-cluster"
   project  = data.terraform_remote_state.projects.outputs.kube_project_id
   name     = var.gke_name
-  location = var.region
+  master_location = "${var.region}-c"
+  nodes_location = ["${var.region}-b"]
 
   min_master_version = var.gke_min_master_version
   node_version       = var.gke_node_version
@@ -11,7 +12,6 @@ module "gke" {
   # to be recreated at each terraform apply.
   # Using name seems to fix this...
   network = module.network.name
-
   subnetwork = module.subnetwork.name
 }
 
@@ -19,7 +19,7 @@ module "gke-pool-1" {
   source       = "../../modules/gke/node-pool"
   project      = data.terraform_remote_state.projects.outputs.kube_project_id
   name_prefix  = "np"
-  location     = var.region
+  location     = "${var.region}-c" # Zone in which the cluster is installed
   cluster      = module.gke.name
   node_count   = var.gke_node_count
   machine_type = var.gke_machine_type

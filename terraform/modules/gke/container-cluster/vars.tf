@@ -1,11 +1,17 @@
+# Cluster will be created multi-zonal but with a monozone master
+# based on region_location variable
+variable "master_location" {
+  type = string
+  description = "Region/zone in which to create the cluster's control plane"
+}
+variable "nodes_location" {
+  type = list(string)
+  description = "Additional zones within the region in which to create nodes"
+}
+
 variable "name" {
   type        = string
   description = "A name for the resource"
-}
-
-variable "location" {
-  type        = string
-  description = "Location in which to install the cluster"
 }
 
 variable "min_master_version" {

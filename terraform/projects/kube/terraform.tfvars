@@ -9,11 +9,11 @@ subnetwork_name = "kube-subnetwork"
 cidr            = "10.42.42.0/24"
 
 gke_name               = "nma-kube"
-gke_min_master_version = "1.16.9-gke.6"
-gke_node_version       = "1.16.9-gke.6"
+gke_min_master_version = "1.16.10-gke.8"
+gke_node_version       = "1.16.10-gke.8"
 
 # Number of nodes by zone
-gke_node_count   = "3"
+gke_node_count   = "2"
 gke_machine_type = "e2-medium"
 gke_disk_size_gb = "10"
 gke_preemptible  = "true"
