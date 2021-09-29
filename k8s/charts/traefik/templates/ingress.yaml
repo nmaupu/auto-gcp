@@ -1,7 +1,7 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullname := include "traefik.fullname" . -}}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $fullname }}-ing
@@ -24,7 +24,10 @@ spec:
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: {{ $fullname }}-svc-admin
-              servicePort: {{ $.Values.services.admin.port }}
+              service:
+                name: {{ $fullname }}-svc-admin
+                port:
+                  number: {{ $.Values.services.admin.port }}
 {{- end -}}

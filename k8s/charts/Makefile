@@ -18,7 +18,7 @@ default: upgrade-all
 upgrade-all:
 	make ingress-watchers
 	make ingress-controllers
-	make kube-ops-view
+	#make kube-ops-view
 	make mysql
 	make dolibarr
 	make compte
