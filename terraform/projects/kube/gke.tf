@@ -3,7 +3,7 @@ module "gke" {
   project  = data.terraform_remote_state.projects.outputs.kube_project_id
   name     = var.gke_name
   master_location = "${var.region}-c"
-  nodes_location = ["${var.region}-b"]
+  #nodes_location = ["${var.region}-b"]
 
   min_master_version = var.gke_min_master_version
   node_version       = var.gke_node_version

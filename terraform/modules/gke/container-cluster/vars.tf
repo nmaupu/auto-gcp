@@ -7,6 +7,7 @@ variable "master_location" {
 variable "nodes_location" {
   type = list(string)
   description = "Additional zones within the region in which to create nodes"
+  default = []
 }
 
 variable "name" {
