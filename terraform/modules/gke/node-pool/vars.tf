@@ -23,6 +23,11 @@ variable "node_count" {
   description = "Number of nodes to create"
 }
 
+variable "nodes_version" {
+  type        = string
+  description = "Version of nodes in the node pool"
+}
+
 variable "machine_type" {
   type        = string
   default     = "f1-micro"

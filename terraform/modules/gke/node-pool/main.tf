@@ -4,6 +4,7 @@ resource "google_container_node_pool" "default" {
   location    = var.location
   cluster     = var.cluster
   node_count  = var.node_count
+  version     = var.nodes_version
 
   node_config {
     machine_type = var.machine_type

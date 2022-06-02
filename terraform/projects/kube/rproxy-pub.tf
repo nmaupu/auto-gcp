@@ -7,24 +7,24 @@ resource "google_compute_disk" "rproxy-pub-certs" {
 }
 
 resource "google_compute_address" "rproxy-pub-addr" {
-  name = "rproxy-pub-addr"
+  name         = "rproxy-pub-addr"
   network_tier = var.rproxy_pub_network_tier
   project      = data.terraform_remote_state.projects.outputs.kube_project_id
 }
 
 module "rproxy-pub-instance" {
-  source       = "../../modules/compute/instance"
-  project      = data.terraform_remote_state.projects.outputs.kube_project_id
-  name         = var.rproxy_pub_name
-  machine_type = var.rproxy_pub_machine_type
-  zone         = "europe-west1-b"
-  tags         = ["rproxy-pub"]
-  image        = var.rproxy_image_pub
-  subnetwork   = module.subnetwork.self_link
-  preemptible  = var.rproxy_pub_preemptible
+  source              = "../../modules/compute/instance"
+  project             = data.terraform_remote_state.projects.outputs.kube_project_id
+  name                = var.rproxy_pub_name
+  machine_type        = var.rproxy_pub_machine_type
+  zone                = "europe-west1-b"
+  tags                = ["rproxy-pub"]
+  image               = var.rproxy_image_pub
+  subnetwork          = module.subnetwork.self_link
+  preemptible         = var.rproxy_pub_preemptible
   on_host_maintenance = var.rproxy_pub_on_host_maintenance
   access_config = {
-    nat_ip = google_compute_address.rproxy-pub-addr.address
+    nat_ip       = google_compute_address.rproxy-pub-addr.address
     network_tier = var.rproxy_pub_network_tier
   }
 

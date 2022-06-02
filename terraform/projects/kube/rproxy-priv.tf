@@ -7,24 +7,24 @@ resource "google_compute_disk" "rproxy-priv-certs" {
 }
 
 resource "google_compute_address" "rproxy-priv-addr" {
-  name = "rproxy-priv-addr"
+  name         = "rproxy-priv-addr"
   network_tier = var.rproxy_priv_network_tier
   project      = data.terraform_remote_state.projects.outputs.kube_project_id
 }
 
 module "rproxy-priv-instance" {
-  source       = "../../modules/compute/instance"
-  project      = data.terraform_remote_state.projects.outputs.kube_project_id
-  name         = var.rproxy_priv_name
-  machine_type = var.rproxy_priv_machine_type
-  zone         = "europe-west1-b"
-  tags         = ["rproxy-priv"]
-  image        = var.rproxy_image_priv
-  subnetwork   = module.subnetwork.self_link
-  preemptible  = var.rproxy_priv_preemptible
+  source              = "../../modules/compute/instance"
+  project             = data.terraform_remote_state.projects.outputs.kube_project_id
+  name                = var.rproxy_priv_name
+  machine_type        = var.rproxy_priv_machine_type
+  zone                = "europe-west1-b"
+  tags                = ["rproxy-priv"]
+  image               = var.rproxy_image_priv
+  subnetwork          = module.subnetwork.self_link
+  preemptible         = var.rproxy_priv_preemptible
   on_host_maintenance = var.rproxy_priv_on_host_maintenance
   access_config = {
-    nat_ip = google_compute_address.rproxy-priv-addr.address
+    nat_ip       = google_compute_address.rproxy-priv-addr.address
     network_tier = var.rproxy_priv_network_tier
   }
 
