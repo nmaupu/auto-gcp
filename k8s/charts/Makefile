@@ -31,8 +31,8 @@ ingress-watchers: check-param-priv1-domain
 
 .PHONY: ingress-controllers
 ingress-controllers: check-param-priv1-domain
-	helm upgrade --install --namespace kube-system -f traefik/values-priv.yaml --set ingress.host=traefik-priv.$(PRIV1_DOMAIN) rp-priv traefik
-	helm upgrade --install --namespace kube-system -f traefik/values-pub.yaml  --set ingress.host=traefik-pub.$(PRIV1_DOMAIN)  rp-pub  traefik
+	helm upgrade --install --namespace kube-system -f traefik/values-priv.yaml traefik-priv traefik
+	helm upgrade --install --namespace kube-system -f traefik/values-pub.yaml  traefik-pub  traefik
 
 #.PHONY: kube-ops-view
 #kube-ops-view: check-param-priv1-domain

@@ -1,37 +1,36 @@
-rbacEnabled: true
-replicaCount: 2
+---
+traefik:
+  deployment:
+    replicas: 2
 
-image:
-  repository: traefik
-  tag: 1.5.3-alpine
-  pullPolicy: IfNotPresent
-  args:
-    - --web
-    - --kubernetes
-    - --kubernetes.labelselector=lb-type=pub
+  providers:
+    kubernetesCRD:
+      enabled: false
+    kubernetesIngress:
+      labelSelector: lb-type=pub
 
-services:
-  web:
+  logs:
+    general:
+      level: INFO
+
+  globalArguments:
+    - "--global.checknewversion"
+
+  ports:
+    traefik:
+      port: 9000
+    web:
+      port: 30080
+      nodePort: 30080
+      exposedPort: 30080
+
+  service:
     type: NodePort
-    port: 80
-    targetPort: 30080
-  admin:
-    type: ClusterIP
-    port: 8080
-    targetPort: 8080
 
-ingress:
-  enabled: true
-  host: traefik-pub.example.com
-  annotations:
-    kubernetes.io/ingress.class: traefik
-  labels:
-    lb-type: priv
-
-resources:
-  limits:
-    cpu: 40m
-    memory: 64Mi
-  requests:
-    cpu: 20m
-    memory: 32Mi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 64Mi
