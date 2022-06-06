@@ -12,9 +12,10 @@
   },
   "builders": [{
       "type": "googlecompute",
+      "disk_size": "20",
       "account_file": "{{user `google_creds`}}",
       "project_id": "{{user `project_id`}}",
-      "source_image_family": "centos-7",
+      "source_image_family": "centos-stream-9",
       "image_family": "rproxy",
       "zone": "{{user `zone`}}",
       "image_name": "{{user `image_name_prefix`}}-{{isotime | clean_image_name}}",
@@ -69,9 +70,14 @@
       "destination": "/tmp/renew-lego.sh"
     },
     {
+      "type": "file",
+      "source": "resources/nginx-selinux.te",
+      "destination": "/tmp/nginx-selinux.te"
+    },
+    {
       "type": "shell",
       "inline": [
-        "sudo yum install -y nginx jq wget",
+        "sudo yum install -y nginx jq wget policycoreutils-python-utils",
         "sudo mv /tmp/nginx.conf /etc/nginx/nginx.conf",
         "sudo mv /tmp/redirect-http.conf /etc/nginx/conf.d",
         "sudo mv /tmp/update-kube-nodes.sh /usr/local/bin",
@@ -99,8 +105,11 @@
         "sudo systemctl enable ingress-receiver",
         "sudo setsebool -P httpd_can_network_connect 1",
         "sudo mkdir -p /var/www/acme",
-        "sudo semanage fcontext -a -t httpd_sys_content_t '/var/www(/.*)?'",
-        "sudo restorecon -Rv /var/www"
+		"sudo semanage fcontext -a -t httpd_sys_content_t '/var/www/acme(/.*)?'",
+		"sudo restorecon -Rv /var/www/acme",
+        "sudo checkmodule -M -m -o /tmp/nginx.mod /tmp/nginx-selinux.te",
+        "sudo semodule_package -o /tmp/nginx.pp -m /tmp/nginx.mod",
+        "sudo semodule -i /tmp/nginx.pp"
       ]
     }
   ]

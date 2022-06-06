@@ -2,9 +2,9 @@ default: build
 .PHONY: build
 
 image_builder=hashicorp/packer:1.1.3
-zone=europe-west1-b
-INGRESS_RECEIVER_VERSION ?= 1.3
-LEGO_VERSION ?= 3.3.0
+zone=europe-west1-c
+INGRESS_RECEIVER_VERSION ?= 1.6
+LEGO_VERSION ?= 4.7.0
 # TF_VAR_main_user_account should have been defined when configuring terraform
 LE_EMAIL_ADDRESS ?= $(TF_VAR_main_user_account)
 

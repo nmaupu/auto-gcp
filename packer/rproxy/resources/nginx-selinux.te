@@ -1,0 +1,12 @@
+module nginx 1.0;
+
+require {
+	type unlabeled_t;
+	type httpd_t;
+	class file { getattr open read };
+}
+
+#============= httpd_t ==============
+
+#!!!! WARNING: 'unlabeled_t' is a base type.
+allow httpd_t unlabeled_t:file { getattr open read };
