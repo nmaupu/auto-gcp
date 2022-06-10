@@ -3,16 +3,16 @@ module "gke" {
   project         = data.terraform_remote_state.projects.outputs.kube_project_id
   name            = var.gke_name
   master_location = "${var.region}-c"
-  #nodes_location = ["${var.region}-b"]
 
   min_master_version = var.gke_min_master_version
-  node_version       = var.gke_node_version
 
   # Using self_link for network and subnetwork seems to force GKE cluster
   # to be recreated at each terraform apply.
   # Using name seems to fix this...
   network    = module.network.name
   subnetwork = module.subnetwork.name
+
+  persistent_disk_csi_enabled = var.gke_persistent_disk_csi_enabled
 }
 
 module "gke-pool-1" {

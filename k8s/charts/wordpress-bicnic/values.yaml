@@ -1,0 +1,131 @@
+wordpress:
+  commonLabels:
+    lb-type: priv
+
+  image:
+    # registry: docker.io
+    # repository: wordpress
+    # tag: php8.1-apache
+    registry: docker.io
+    repository: bitnami/wordpress
+    tag: 5.9.3-debian-10-r62
+
+  updateStrategy:
+    type: Recreate
+    rollingUpdate: null
+
+  extraEnvVars:
+    - name: PHP_UPLOAD_MAX_FILESIZE
+      value: 5M
+    - name: WORDPRESS_DATA_TO_PERSIST
+      value: " " # space is mandatory to unset this var
+
+
+  # By default, bitnami container is packaging a specific wordpress version
+  # Only some dirs are symlinked (e.g wp-content)
+  # This config makes it impossible to upgrade wordpress core
+  # The goal of this initContainer is to replace wordpress core by the one stored on PV.
+  # As a result, when upgrading, files are stored (and used) from PV and not from container itself
+  # This needs ~20 sec to execute
+  htaccessPersistenceEnabled: false # do not activate that or /bitnami/wordpress/.htaccess will be replaced by a symlink pointing to itself
+  allowOverrideNone: false
+  extraVolumes:
+    - name: bitnami-root
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: bitnami-root
+      mountPath: /opt/bitnami
+  initContainers:
+    - name: init-wp-site
+      image: bitnami/wordpress:5.9.3-debian-10-r62
+      imagePullPolicy: IfNotPresent
+      command:
+        - /bin/bash
+      args:
+        - -ec
+        - |
+          cp -aT /opt/bitnami /tmp/bitnami
+          rm -rf /tmp/bitnami/wordpress
+          cd /tmp/bitnami
+          ln -s /bitnami/wordpress ./wordpress
+      securityContext:
+        runAsUser: 0
+      volumeMounts:
+        - name: bitnami-root
+          mountPath: /tmp/bitnami
+
+  wordpressBlogName: "Bicnic en voyage"
+
+  wordpressScheme: https
+  wordpressSkipInstall: true
+  wordpressPlugins: all
+  wordpressConfigureCache: true
+
+  allowEmptyPassword: false
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  containerPorts:
+    http: 8080
+    https: 8443
+
+  service:
+    type: NodePort
+    ports:
+      http: 8080
+    nodePorts:
+      http: 30083
+
+  ingress:
+    enabled: true
+    hostname: wordpress.example.com
+    annotations:
+      kubernetes.io/ingress.class: traefik
+
+  persistence:
+    storageClass: ssd
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+  volumePermissions:
+    enabled: false
+
+  mariadb:
+    enabled: false
+  externalDatabase:
+    host: mysql.db
+    port: 3306
+    database: wordpress_bicnic
+    existingSecret: wordpress-db-creds
+
+  memcached:
+    enabled: true
+    resources:
+      requests:
+        memory: 200Mi
+        cpu: 250m
+      limits:
+        memory: 350Mi
+        cpu: 500m
+
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 6
+    successThreshold: 1
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+#  diagnosticMode:
+#    enabled: true

@@ -3,6 +3,10 @@ traefik:
   deployment:
     replicas: 1
 
+  # Allow access to dashboard using port-forward
+  additionalArguments:
+    - --api.insecure=true
+
   providers:
     kubernetesCRD:
       enabled: false
@@ -19,10 +23,13 @@ traefik:
   ports:
     traefik:
       port: 9000
+      expose: false
     web:
       port: 30081
       nodePort: 30081
       exposedPort: 30081
+    websecure:
+      expose: false
 
   service:
     type: NodePort

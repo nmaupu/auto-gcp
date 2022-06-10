@@ -1,12 +1,3 @@
-output "gke_username" {
-  value = module.gke.username
-}
-
-output "gke_password" {
-  value     = module.gke.password
-  sensitive = true
-}
-
 output "gke_client_certificate" {
   value     = module.gke.client_certificate
   sensitive = true

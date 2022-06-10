@@ -31,6 +31,11 @@ variable "gke_min_master_version" {
 variable "gke_node_version" {
 }
 
+variable "gke_persistent_disk_csi_enabled" {
+  type = bool
+}
+
+
 # node pool
 variable "gke_node_count" {
 }
@@ -104,4 +109,3 @@ variable "rproxy_ssh_port" {
 variable "ingwatcher_ports" {
   type = list(string)
 }
-

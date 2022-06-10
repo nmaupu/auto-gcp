@@ -20,11 +20,6 @@ variable "min_master_version" {
   description = "Minimal version of the kubernetes cluster"
 }
 
-variable "node_version" {
-  type        = string
-  description = "Version of the kubernetes nodes"
-}
-
 variable "network" {
   type        = string
   description = "Network to use for VMs"
@@ -40,3 +35,8 @@ variable "project" {
   description = "Project to put cluster into"
 }
 
+variable "persistent_disk_csi_enabled" {
+  type = bool
+  description = "Enable or not the CSI persistent disk CSI driver (gce_persistent_disk_csi_driver_config)"
+  default = false
+}

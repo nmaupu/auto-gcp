@@ -39,27 +39,26 @@ ingress-controllers: check-param-priv1-domain
 #	helm upgrade --install --namespace kube-system --set ingress.host=kov.$(PRIV1_DOMAIN) romantic-euler kube-ops-view
 
 .PHONY: mysql
-mysql: check-vault gke-storage-ssd ns-db
+mysql: check-vault gke-storage ns-db
+	$(eval workload_identity_sa_email := $(shell gcloud iam service-accounts list --format=json | jq -r '.[] | select(.name|test("backup")) | .email'))
 	helm upgrade --install \
 	  --namespace $(DB_NAMESPACE) \
-	  --set mysqlRootPassword=$(shell vault read -field password secret/gce/mysql) \
-	  --set persistence.storageClass=ssd \
-	  --set persistence.size=2Gi \
-	  --set resources.limits.cpu=200m \
-	  --set resources.requests.memory=128Mi \
-	  --set resources.limits.memory=256Mi \
+	  -f mysql/values.yaml \
+	  --set mysql.serviceAccount.annotations."iam\.gke\.io\/gcp-service-account"=$(workload_identity_sa_email) \
+	  --set mysql.auth.rootPassword=$(shell vault read -field password secret/gce/mysql) \
 	  mysql \
-	  stable/mysql
+	  mysql
 	helm upgrade --install \
 	  --namespace $(DB_NAMESPACE) \
 	  --set job.schedule="0 3 * * *" \
 	  --set mysql.database=mysql \
+	  --set serviceAccountName=mysql \
 	  $(DB_BACKUP_OPTS) \
 	  bak-mysql \
 	  mysql-backup
 
 .PHONY: dolibarr
-dolibarr: gke-storage-ssd ns-tools ns-db
+dolibarr: gke-storage check-vault ns-tools ns-db gke-snapshotclass
 	helm upgrade --install \
 	  --namespace tools \
 	  --set image.tag=8.0.2 \
@@ -68,12 +67,13 @@ dolibarr: gke-storage-ssd ns-tools ns-db
 	  --set conf.db_username=$(shell vault read -field username secret/gce/mysql-dolibarr) \
 	  --set conf.db_password=$(shell vault read -field password secret/gce/mysql-dolibarr) \
 	  --set conf.cookie_key=$(shell vault read -field cookie_key secret/gce/mysql-dolibarr) \
-	  quiet-ragdoll \
+	  dolibarr \
 	  dolibarr
 	helm upgrade --install \
 	  --namespace $(DB_NAMESPACE) \
 	  --set job.schedule="0 4 * * *" \
 	  --set mysql.database=dolibarr \
+		--set serviceAccountName=mysql \
 	  $(DB_BACKUP_OPTS) \
 	  bak-dolibarr \
 	  mysql-backup
@@ -94,29 +94,50 @@ compte: check-vault ns-tools ns-db
 	  --namespace $(DB_NAMESPACE) \
 	  --set job.schedule="0 1 * * *" \
 	  --set mysql.database=compte \
+	  --set serviceAccountName=mysql \
 	  $(DB_BACKUP_OPTS) \
 	  bak-compte \
+	  mysql-backup
+
+.PHONY: wordpress-bicnic
+wordpress-bicnic: gke-storage check-vault ns-tools ns-db gke-snapshotclass check-param-priv1-domain
+	helm upgrade --install \
+	  --namespace tools \
+	  -f wordpress-bicnic/values.yaml \
+	  --set wordpress.ingress.hostname=bicnic-test.${PRIV1_DOMAIN} \
+	  --set mysql.externalDatabase.user=$(shell vault read -field username secret/gce/mysql-wp-blogvoy) \
+	  --set mysqlPassword=$(shell vault read -field password secret/gce/mysql-wp-blogvoy) \
+	  wp-bicnic \
+	  wordpress-bicnic
+	helm upgrade --install \
+	  --namespace $(DB_NAMESPACE) \
+	  --set job.schedule="30 2 * * *" \
+	  --set mysql.database=wordpress_bicnic \
+	  --set serviceAccountName=mysql \
+	  $(DB_BACKUP_OPTS) \
+	  bak-wp-bicnic \
 	  mysql-backup
 
 .PHONY: phpmyadmin
 phpmyadmin: check-param-priv1-domain ns-tools
 	helm upgrade --install \
 	  --namespace tools \
-	  --set ingress.host=phpmyadmin.$(PRIV1_DOMAIN) \
-	  --set pma.host=mysql.$(DB_NAMESPACE) \
-	  cocky-cori \
-	  phpmyadmin
+	  -f phpmyadmin/values.yaml \
+	  --set ingress.hostname=phpmyadmin.$(PRIV1_DOMAIN) \
+	  --set db.host=mysql.$(DB_NAMESPACE) \
+	  pma \
+	  bitnami/phpmyadmin
 
-#.PHONY: helm-init
-#helm-init:
-#	kubectl apply -f tiller-rbac.yaml
-#	helm init --upgrade --service-account=tiller
-#	sleep 8
-
-.PHONY: gke-storage-ssd
-gke-storage-ssd:
+.PHONY: gke-storage
+gke-storage:
 	# GKE SSD Storage class
 	kubectl apply -f gke-storage-ssd.yaml
+	kubectl apply -f gke-storage-csi-std.yaml
+
+.PHONY: gke-snapshotclass
+gke-snapshotclass:
+	# GKE persistent disk CSI snapshotclass
+	kubectl apply -f gke-snapshotclass.yaml
 
 .PHONY: ns-tools
 ns-tools:
@@ -128,40 +149,7 @@ ns-db:
 
 .PHONY: run-mysql-client
 run-mysql-client:
-	kubectl run --rm --namespace $(DB_NAMESPACE) -i --tty mysql-client --image=docker.io/nmaupu/mysql-client:1.1 --overrides=' \
-{ \
-  "apiVersion": "apps/v1", \
-  "spec": { \
-    "template": { \
-      "spec": { \
-        "containers": [ \
-          { \
-            "name": "mysql-client", \
-            "image": "docker.io/nmaupu/mysql-client:1.1", \
-            "args": [ \
-              "-h", "$(DB_SVC_NAME).$(DB_NAMESPACE)", "-u", "root", "--password=$$(MYSQL_PASSWORD)" \
-            ], \
-            "stdin": true, \
-            "stdinOnce": true, \
-            "tty": true, \
-            "env": [ \
-              { \
-                "name": "MYSQL_PASSWORD", \
-                "valueFrom": { \
-                  "secretKeyRef": { \
-                    "name": "$(DB_SVC_NAME)", \
-                    "key": "mysql-root-password" \
-                  } \
-                } \
-              } \
-            ] \
-          } \
-        ] \
-      } \
-    } \
-  } \
-} \
-'
+	kubectl run --rm --namespace $(DB_NAMESPACE) -i --tty mysql-client --image=docker.io/nmaupu/mysql-client:1.1 --overrides='{"kind":"Pod","apiVersion":"v1","spec":{"containers":[{"name":"mysql-client","image":"docker.io/nmaupu/mysql-client:1.1","args":["-h","mysql.db","-u","root","--password=$$(MYSQL_PASSWORD)"],"stdin":true,"stdinOnce":true,"tty":true,"env":[{"name":"MYSQL_PASSWORD","valueFrom":{"secretKeyRef":{"name":"mysql","key":"mysql-root-password"}}}]}]}}'
 
 .PHONY: check-vault
 check-vault:

@@ -1,7 +1,7 @@
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ .Release.Name }}-backup-{{ .Values.mysql.database }}
+  name: {{ .Release.Name }}-backup-{{ .Values.mysql.database | replace "_" "-" }}
   namespace: {{ .Release.Namespace }}
 spec:
   startingDeadlineSeconds: {{ .Values.job.startingDeadlineSeconds }}
@@ -13,6 +13,8 @@ spec:
     spec:
       template:
         spec:
+          # Service account created by mysql chart
+          serviceAccountName: {{ .Values.serviceAccountName }}
           restartPolicy: Never
           containers:
           - name: backup

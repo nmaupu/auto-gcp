@@ -28,7 +28,7 @@ resources:
 
 persistence:
   enabled: true
-  storageClass: ssd
+  storageClass: csi-standard
   accessMode: ReadWriteOnce
   size: 1Gi
   #existingClaim: existing-claim-id

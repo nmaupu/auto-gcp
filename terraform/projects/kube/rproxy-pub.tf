@@ -2,7 +2,7 @@ resource "google_compute_disk" "rproxy-pub-certs" {
   project = data.terraform_remote_state.projects.outputs.kube_project_id
   name    = "rproxy-pub-certs"
   type    = "pd-standard"
-  zone    = "europe-west1-b"
+  zone    = "europe-west1-c"
   size    = "1"
 }
 
@@ -17,7 +17,7 @@ module "rproxy-pub-instance" {
   project             = data.terraform_remote_state.projects.outputs.kube_project_id
   name                = var.rproxy_pub_name
   machine_type        = var.rproxy_pub_machine_type
-  zone                = "europe-west1-b"
+  zone                = "europe-west1-c"
   tags                = ["rproxy-pub"]
   image               = var.rproxy_image_pub
   subnetwork          = module.subnetwork.self_link

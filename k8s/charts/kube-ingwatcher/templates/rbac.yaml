@@ -12,7 +12,7 @@ metadata:
   name: {{ template "kube-ingwatcher.fullname" . }}-cr
 rules:
 - apiGroups:
-    - "extensions"
+    - networking.k8s.io
   resources:
     - ingresses
   verbs:
