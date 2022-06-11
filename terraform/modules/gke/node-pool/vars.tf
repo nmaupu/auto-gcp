@@ -62,3 +62,8 @@ variable "auto_upgrade" {
   description = "Activate management auto upgrade feature"
 }
 
+variable "tags" {
+  type = list(string)
+  default = []
+  description = "Add tags to instance VMs of the node pool"
+}

@@ -11,6 +11,23 @@ resource "google_compute_firewall" "http-default" {
   project = data.terraform_remote_state.projects.outputs.kube_project_id
 }
 
+# Allow ssh to nodes from private IPs
+resource "google_compute_firewall" "ssh-k8s-nodes" {
+  name = "k8s-nodes-ssh-allow"
+  network = module.network.self_link
+
+  source_ranges = var.rproxy_priv_sources
+  target_tags = [
+    "${var.gke_name}-nodes"
+  ]
+
+  allow {
+    protocol = "tcp"
+    ports = ["22"]
+  }
+  project     = data.terraform_remote_state.projects.outputs.kube_project_id
+}
+
 # ping ok from known sources
 resource "google_compute_firewall" "rproxy-icmp-rules" {
   name    = "rproxy-icmp-allow"

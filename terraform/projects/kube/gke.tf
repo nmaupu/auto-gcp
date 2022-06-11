@@ -25,6 +25,7 @@ module "gke-pool-1" {
   machine_type  = var.gke_machine_type
   disk_size_gb  = var.gke_disk_size_gb
   nodes_version = var.gke_node_version
+  tags          = ["${var.gke_name}-nodes"]
 
   oauth_scopes = [
     "compute-rw",

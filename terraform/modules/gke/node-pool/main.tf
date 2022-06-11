@@ -11,6 +11,7 @@ resource "google_container_node_pool" "default" {
     disk_size_gb = var.disk_size_gb
     oauth_scopes = var.oauth_scopes
     preemptible  = var.preemptible
+    tags         = var.tags
   }
 
   management {

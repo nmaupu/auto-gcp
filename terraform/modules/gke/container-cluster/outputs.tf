@@ -1,4 +1,12 @@
 # The following outputs allow authentication and connectivity to the GKE Cluster.
+output "self_link" {
+  value = google_container_cluster.default.self_link
+}
+
+output "id" {
+  value = google_container_cluster.default.id
+}
+
 output "client_certificate" {
   value = google_container_cluster.default.master_auth[0].client_certificate
 }

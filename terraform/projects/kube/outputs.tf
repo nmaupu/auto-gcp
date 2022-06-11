@@ -15,3 +15,11 @@ output "gke_cluster_ca_certificate" {
 output "gke_master_version" {
   value = module.gke.master_version
 }
+
+output "gke_self_link" {
+  value = module.gke.self_link
+}
+
+output "gke_id" {
+  value = module.gke.id
+}
