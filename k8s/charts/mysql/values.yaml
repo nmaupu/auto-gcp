@@ -42,7 +42,7 @@ mysql:
     resources:
       limits:
         cpu: 500m
-        memory: 768Mi
+        memory: 800Mi
       requests:
         cpu: 100m
-        memory: 512Mi
+        memory: 700Mi
