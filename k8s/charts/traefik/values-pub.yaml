@@ -1,5 +1,7 @@
 ---
 traefik:
+  priorityClassName: high-priority
+
   deployment:
     replicas: 2
 

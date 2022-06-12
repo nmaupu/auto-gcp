@@ -21,10 +21,10 @@ ingress:
 resources:
   limits:
     cpu: 100m
-    memory: 260Mi
+    memory: 256Mi
   requests:
     cpu: 20m
-    memory: 210Mi
+    memory: 128Mi
 
 persistence:
   enabled: true

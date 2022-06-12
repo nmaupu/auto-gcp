@@ -1,0 +1,15 @@
+image:
+  repository: bitnami/kubectl
+  tag: 1.24.1-debian-11-r0
+  pullPolicy: IfNotPresent
+
+job:
+  startingDeadlineSeconds: 300
+  schedule: 59 23 * * *
+  history:
+    completed: 5
+    failed: 5
+
+pvc: pvc-to-snapshot
+maxKeep: 30 days
+volumeSnapshotClassName: gke-vol-snapshot

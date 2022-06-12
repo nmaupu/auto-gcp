@@ -1,4 +1,6 @@
 wordpress:
+  priorityClassName: high-priority
+
   commonLabels:
     lb-type: priv
 
@@ -76,7 +78,7 @@ wordpress:
     https: 8443
 
   service:
-    type: NodePort
+    type: ClusterIP
     ports:
       http: 8080
     nodePorts:
@@ -89,7 +91,7 @@ wordpress:
       kubernetes.io/ingress.class: traefik
 
   persistence:
-    storageClass: ssd
+    storageClass: csi-standard
     accessModes:
       - ReadWriteOnce
     size: 5Gi

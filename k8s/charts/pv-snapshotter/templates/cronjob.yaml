@@ -1,0 +1,106 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "pv-snapshotter.fullname" . }}
+  labels:
+    {{- include "pv-snapshotter.labels" . | nindent 4 }}
+spec:
+  startingDeadlineSeconds: {{ .Values.job.startingDeadlineSeconds }}
+  schedule: {{ .Values.job.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ .Values.job.history.completed }}
+  failedJobsHistoryLimit: {{ .Values.job.history.failed }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            pvc: {{ .Values.pvc }}
+            maxKeep: {{ .Values.maxKeep }}
+            volumeSnapshotClassName: {{ .Values.volumeSnapshotClassName }}
+          labels:
+            {{- include "pv-snapshotter.labels" . | nindent 12 }}
+        spec:
+          serviceAccountName: {{ include "pv-snapshotter.fullname" . }}
+          restartPolicy: Never
+          containers:
+          - name: snapshot
+            image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            env:
+            # Use pod name to get annotations of this pod from inside the pod
+            # Unfortunately, the downward API doesn't support getting annotations...
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            command:
+            - /bin/bash
+            args:
+            - -c
+            - |
+              #!/usr/bin/env bash
+
+              set -euo pipefail
+
+              # This script creates a new volumesnapshot using google CRD
+              # Parameters are passed as pod annotations:
+              #   pvc:              name of the PVC to snapshot
+              #   maxKeep:          time format used to delete older snapshot (format is the one used by GNU date). e.g. 3 days, 60 seconds, 1 day, etc.
+              #   volSnapClassName: volumeSnapshotClassName to use
+
+              BACKUP_DATE_FORMAT="%Y%m%d-%H%M%S"
+
+              convert_date() {
+                # Convert a date from $BACKUP_DATE_FORMAT to RFC3339 understood by date
+                echo "$1" | sed -E 's/^([0-9]{4})([0-9]{2})([0-9]{2})-([0-9]{2})([0-9]{2})([0-9]{2})/\1-\2-\3T\4:\5:\6Z/g'
+              }
+
+              # Retrieving parameters in pod's annotations
+              labels=$(kubectl get pods "${POD_NAME}" -o jsonpath='{.metadata.labels}')
+              annotations=$(kubectl get pods "${POD_NAME}" -o jsonpath='{.metadata.annotations}')
+              pvc=$(echo "${annotations}" | jq -r '.pvc')
+              maxKeep=$(echo "${annotations}" | jq -r '.maxKeep')
+              volSnapClassName=$(echo "${annotations}" | jq -r '.volumeSnapshotClassName')
+              releaseName=$(echo "${labels}" | jq -r '."app.kubernetes.io/instance"')
+
+              [ -z "${pvc}" ]              && echo "pvc label is missing, cannot proceed."   && exit 1
+              [ -z "${maxKeep}" ]          && echo "maxKeep label is missing, cannot proceed"    && exit 1
+              [ -z "${volSnapClassName}" ] && echo "volumeSnapshotClassName label is missing, cannot proceed"    && exit 1
+
+              backup_name="${pvc}-$(date +${BACKUP_DATE_FORMAT})"
+              timeago="${maxKeep} ago"
+
+              # Deleting too old snapshots
+              kubectl get volumesnapshots -l "pvc=${pvc},app.kubernetes.io/instance=${releaseName}" \
+                --sort-by=.metadata.creationTimestamp \
+                -o json \
+                | jq -r '.items[] | .metadata.name' \
+                | while read -r vs; do
+                    date_to_convert=$(echo "$vs" | sed -E "s/${pvc}-//g")
+                    datetime=$(convert_date "$date_to_convert")
+                    dtsec=$(date --date "$datetime" +%s)
+                    tasec=$(date --date "$timeago"  +%s)
+                    if [ "$dtsec" -lt "$tasec" ]; then
+                      echo "Deleting $vs: older than $maxKeep ago"
+                      kubectl delete volumesnapshot "$vs" >/dev/null
+                    else
+                      echo "Keeping $vs"
+                    fi
+                  done
+
+              # Creating a new snapshot
+              cat << EOF | kubectl create -f -
+              apiVersion: snapshot.storage.k8s.io/v1
+              kind: VolumeSnapshot
+              metadata:
+                name: ${backup_name}
+                labels:
+                  pvc: ${pvc}
+                  app.kubernetes.io/instance: ${releaseName}
+              spec:
+                volumeSnapshotClassName: ${volSnapClassName}
+                source:
+                  persistentVolumeClaimName: ${pvc}
+              EOF

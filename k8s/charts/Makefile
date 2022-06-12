@@ -16,12 +16,16 @@ default: upgrade-all
 
 .PHONY: upgrade-all
 upgrade-all:
+	make priority
+	make gke-storage
+	make gke-snapshotclass
 	make ingress-watchers
 	make ingress-controllers
 	#make kube-ops-view
 	make mysql
 	make dolibarr
 	make compte
+	make wordpress-bicnic
 	make phpmyadmin
 
 .PHONY: ingress-watchers
@@ -40,11 +44,11 @@ ingress-controllers: check-param-priv1-domain
 
 .PHONY: mysql
 mysql: check-vault gke-storage ns-db
-	$(eval workload_identity_sa_email := $(shell gcloud iam service-accounts list --format=json | jq -r '.[] | select(.name|test("backup")) | .email'))
+	$(eval workload_identity_sa_email_db_backups := $(shell gcloud iam service-accounts list --format=json | jq -r '.[] | select(.name|test("backup")) | .email'))
 	helm upgrade --install \
 	  --namespace $(DB_NAMESPACE) \
 	  -f mysql/values.yaml \
-	  --set mysql.serviceAccount.annotations."iam\.gke\.io\/gcp-service-account"=$(workload_identity_sa_email) \
+	  --set mysql.serviceAccount.annotations."iam\.gke\.io\/gcp-service-account"=$(workload_identity_sa_email_db_backups) \
 	  --set mysql.auth.rootPassword=$(shell vault read -field password secret/gce/mysql) \
 	  mysql \
 	  mysql
@@ -77,6 +81,13 @@ dolibarr: gke-storage check-vault ns-tools ns-db gke-snapshotclass
 	  $(DB_BACKUP_OPTS) \
 	  bak-dolibarr \
 	  mysql-backup
+	helm upgrade --install \
+		--namespace tools \
+		--set pvc=dolibarr \
+		--set maxKeep="14 days" \
+		--set job.schedule="34 4 * * *" \
+		pv-snap-dolibarr \
+		pv-snapshotter
 
 .PHONY: compte
 compte: check-vault ns-tools ns-db
@@ -117,6 +128,13 @@ wordpress-bicnic: gke-storage check-vault ns-tools ns-db gke-snapshotclass check
 	  $(DB_BACKUP_OPTS) \
 	  bak-wp-bicnic \
 	  mysql-backup
+	helm upgrade --install \
+		--namespace tools \
+		--set pvc=wp-bicnic-wordpress \
+		--set maxKeep="30 days" \
+		--set job.schedule="0 */12 * * *" \
+		pv-snap-wordpress-bicnic \
+		pv-snapshotter
 
 .PHONY: phpmyadmin
 phpmyadmin: check-param-priv1-domain ns-tools
@@ -127,6 +145,10 @@ phpmyadmin: check-param-priv1-domain ns-tools
 	  --set db.host=mysql.$(DB_NAMESPACE) \
 	  pma \
 	  bitnami/phpmyadmin
+
+.PHONY: priority
+priority:
+	kubectl apply -f high-priority.yaml
 
 .PHONY: gke-storage
 gke-storage:

@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "pv-snapshotter.fullname" . }}
+  labels:
+    {{- include "pv-snapshotter.labels" . | nindent 4 }}

@@ -3,6 +3,7 @@ mysql:
     debug: true
 
   primary:
+    priorityClassName: high-priority
     persistence:
       storageClass: ssd
       size: 2Gi
