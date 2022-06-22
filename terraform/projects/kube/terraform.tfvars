@@ -15,7 +15,14 @@ gke_persistent_disk_csi_enabled = true
 
 # Number of nodes by zone
 gke_node_count   = "3"
-gke_machine_type = "e2-small"
+# Machines have been committed for 3 years (2022-06-22) using CUD (Committed Use Discount)
+# CUD are not automatically renewed !
+# CUD has been done manually using the console (no terraform support yet)
+# Parameters used:
+# vCPU: 3 (enough for 3 machines because e2-medium has only 1 vCPU reserved and 2 vCPU burstable)
+# RAM: 12GiB (3 * 4GiB)
+# Reservation has also been specified (and is free because part of the CUD)
+gke_machine_type = "e2-medium"
 gke_disk_size_gb = "15"
 gke_preemptible  = "false"
 gke_auto_repair  = "true"
