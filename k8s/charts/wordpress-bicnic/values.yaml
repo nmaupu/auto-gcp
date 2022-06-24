@@ -67,11 +67,11 @@ wordpress:
 
   resources:
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 1000m
+      memory: 600Mi
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 200m
+      memory: 400Mi
 
   containerPorts:
     http: 8080
