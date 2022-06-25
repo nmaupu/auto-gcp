@@ -37,4 +37,3 @@ output "kube_priv1_name_servers" {
 output "kube_pro1_name_servers" {
   value = module.kube_pro1_managed_zone.name_servers
 }
-

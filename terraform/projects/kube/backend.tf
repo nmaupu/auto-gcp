@@ -3,6 +3,7 @@ terraform {
     bucket = "nma-terraform"
     prefix = "kube.tfstate"
   }
+
   required_providers {
     google = {
       source  = "hashicorp/google"

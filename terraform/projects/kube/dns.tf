@@ -12,6 +12,34 @@ module "rproxy-pub1-dns-record-A" {
   project_id = data.terraform_remote_state.projects.outputs.kube_project_id
 }
 
+module "rproxy-pub1-dns-record-A-base" {
+  source       = "../../modules/dns/record_set"
+  name         = "${data.terraform_remote_state.projects.outputs.kube_pub1_dns_name}"
+  type         = "A"
+  ttl          = "86400"
+  managed_zone = data.terraform_remote_state.projects.outputs.kube_pub1_managed_zone
+
+  rrdatas = [
+    module.rproxy-pub-instance.nat_ip,
+  ]
+
+  project_id = data.terraform_remote_state.projects.outputs.kube_project_id
+}
+
+module "rproxy-pub1-dns-record-CNAME-www" {
+  source       = "../../modules/dns/record_set"
+  name         = "www.${data.terraform_remote_state.projects.outputs.kube_pub1_dns_name}"
+  type         = "CNAME"
+  ttl          = "86400"
+  managed_zone = data.terraform_remote_state.projects.outputs.kube_pub1_managed_zone
+
+  rrdatas = [
+    data.terraform_remote_state.projects.outputs.kube_pub1_dns_name
+  ]
+
+  project_id = data.terraform_remote_state.projects.outputs.kube_project_id
+}
+
 module "rproxy-priv1-dns-record-A" {
   source       = "../../modules/dns/record_set"
   name         = "*.${data.terraform_remote_state.projects.outputs.kube_priv1_dns_name}"
