@@ -66,7 +66,7 @@ mysql: check-vault gke-storage ns-db
 dolibarr: gke-storage check-vault ns-tools ns-db gke-snapshotclass
 	helm upgrade --install \
 	  --namespace tools \
-	  --set image.tag=8.0.2 \
+	  --set image.tag=15.0.2 \
 	  --set ingress.hosts="{$(shell vault read -field appurl secret/gce/mysql-dolibarr)}" \
 	  --set conf.db_host=$(DB_SVC_NAME).$(DB_NAMESPACE) \
 	  --set conf.db_username=$(shell vault read -field username secret/gce/mysql-dolibarr) \

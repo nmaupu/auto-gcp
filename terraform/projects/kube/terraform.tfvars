@@ -41,7 +41,7 @@ rproxy_pub_machine_type        = "e2-small"
 rproxy_pub_preemptible         = "false"
 rproxy_pub_network_tier        = "STANDARD"
 rproxy_pub_on_host_maintenance = "MIGRATE"
-rproxy_image_pub               = "rproxy-pub-2022-06-06t15-08-58z"
+rproxy_image_pub               = "rproxy-pub-2022-06-27t21-51-09z"
 
 # private rproxy
 rproxy_priv_name                = "rproxy-priv"
@@ -49,7 +49,7 @@ rproxy_priv_machine_type        = "e2-small"
 rproxy_priv_preemptible         = "false"
 rproxy_priv_network_tier        = "STANDARD"
 rproxy_priv_on_host_maintenance = "MIGRATE"
-rproxy_image_priv               = "rproxy-priv-2022-06-06t15-29-32z"
+rproxy_image_priv               = "rproxy-priv-2022-06-27t21-55-02z"
 
 rproxy_http_port  = "80"
 rproxy_https_port = "443"
