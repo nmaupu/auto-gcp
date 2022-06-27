@@ -2,6 +2,7 @@
 
 ## Parameters:
 #    - PRIV1_DOMAIN (e.g. f*****.***)
+#    - PUB1_DOMAIN (e.g. b*****.**)
 
 DB_NAMESPACE     = db
 DB_SVC_NAME      = mysql
@@ -110,12 +111,15 @@ compte: check-vault ns-tools ns-db
 	  bak-compte \
 	  mysql-backup
 
+# www will be redirected by wordpress to main domain
 .PHONY: wordpress-bicnic
-wordpress-bicnic: gke-storage check-vault ns-tools ns-db gke-snapshotclass check-param-priv1-domain
+wordpress-bicnic: gke-storage check-vault ns-tools ns-db gke-snapshotclass check-param-pub1-domain
 	helm upgrade --install \
 	  --namespace tools \
 	  -f wordpress-bicnic/values.yaml \
-	  --set wordpress.ingress.hostname=bicnic-test.${PRIV1_DOMAIN} \
+	  --set wordpress.ingress.hostname=${PUB1_DOMAIN} \
+	  --set wordpress.ingress.extraHosts[0].name=www.${PUB1_DOMAIN} \
+	  --set wordpress.ingress.extraHosts[0].path=/ \
 	  --set mysql.externalDatabase.user=$(shell vault read -field username secret/gce/mysql-wp-blogvoy) \
 	  --set mysqlPassword=$(shell vault read -field password secret/gce/mysql-wp-blogvoy) \
 	  wp-bicnic \
@@ -181,4 +185,10 @@ check-vault:
 check-param-priv1-domain:
 ifndef PRIV1_DOMAIN
 	$(error Provide PRIV1_DOMAIN as parameter)
+endif
+
+.PHONY: check-param-pub1-domain
+check-param-pub1-domain:
+ifndef PUB1_DOMAIN
+	$(error Provide PUB1_DOMAIN as parameter)
 endif

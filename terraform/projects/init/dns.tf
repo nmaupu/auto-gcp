@@ -45,7 +45,7 @@ module "pub1_MX_records" {
   name         = module.kube_pub1_managed_zone.dns_name
 
   type = "MX"
-  ttl  = "3600"
+  ttl  = "86400"
 
   rrdatas = [
     "10 aspmx.l.google.com.",
@@ -63,7 +63,7 @@ module "pub1_CNAME_verify_mail_1" {
   name         = "DDSJUQX4KUYZ.${module.kube_pub1_managed_zone.dns_name}"
 
   type = "CNAME"
-  ttl  = "10800"
+  ttl  = "86400"
 
   rrdatas = [
     "gv-dbhxxbgvyphmchlmxe2b7b7y5ptllflaxtf4adouarplzg2wkypq.domainverify.googlehosted.com."
@@ -77,7 +77,7 @@ module "pub1_CNAME_verify_mail_2" {
   name         = "googleffffffffe979ab69.${module.kube_pub1_managed_zone.dns_name}"
 
   type = "CNAME"
-  ttl  = "10800"
+  ttl  = "86400"
 
   rrdatas = [
     "google.com."
@@ -91,7 +91,7 @@ module "pub1_CNAME_voyages" {
   name         = "voyages.${module.kube_pub1_managed_zone.dns_name}"
 
   type = "CNAME"
-  ttl  = "10800"
+  ttl  = "864000"
 
   rrdatas = [
     "ghs.google.com."

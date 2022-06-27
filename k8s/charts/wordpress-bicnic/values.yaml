@@ -2,7 +2,7 @@ wordpress:
   priorityClassName: high-priority
 
   commonLabels:
-    lb-type: priv
+    lb-type: pub
 
   image:
     # registry: docker.io
@@ -22,6 +22,8 @@ wordpress:
     - name: WORDPRESS_DATA_TO_PERSIST
       value: " " # space is mandatory to unset this var
 
+  # Custom httpd.conf to allow logging real client IP using X-Real-IP header
+  existingApacheConfigurationConfigMap: wordpress-httpd-conf
 
   # By default, bitnami container is packaging a specific wordpress version
   # Only some dirs are symlinked (e.g wp-content)

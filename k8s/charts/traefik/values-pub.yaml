@@ -8,6 +8,7 @@ traefik:
   # Allow access to dashboard using port-forward
   additionalArguments:
     - --api.insecure=true
+    - --entryPoints.web.forwardedHeaders.insecure
 
   providers:
     kubernetesCRD:
