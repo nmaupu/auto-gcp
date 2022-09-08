@@ -9,8 +9,8 @@ subnetwork_name = "kube-subnetwork"
 cidr            = "10.42.42.0/24"
 
 gke_name                        = "nma-kube"
-gke_min_master_version          = "1.23.6-gke.1700"
-gke_node_version                = "1.23.6-gke.1700"
+gke_min_master_version          = "1.24.3-gke.2100"
+gke_node_version                = "1.24.3-gke.2100"
 gke_persistent_disk_csi_enabled = true
 
 # Number of nodes by zone
@@ -41,7 +41,7 @@ rproxy_pub_machine_type        = "e2-small"
 rproxy_pub_preemptible         = "false"
 rproxy_pub_network_tier        = "STANDARD"
 rproxy_pub_on_host_maintenance = "MIGRATE"
-rproxy_image_pub               = "rproxy-pub-2022-06-27t21-51-09z"
+rproxy_image_pub               = "rproxy-pub-2022-09-08t10-08-41z"
 
 # private rproxy
 rproxy_priv_name                = "rproxy-priv"
@@ -49,7 +49,7 @@ rproxy_priv_machine_type        = "e2-small"
 rproxy_priv_preemptible         = "false"
 rproxy_priv_network_tier        = "STANDARD"
 rproxy_priv_on_host_maintenance = "MIGRATE"
-rproxy_image_priv               = "rproxy-priv-2022-06-27t21-55-02z"
+rproxy_image_priv               = "rproxy-priv-2022-09-08t10-04-31z"
 
 rproxy_http_port  = "80"
 rproxy_https_port = "443"
