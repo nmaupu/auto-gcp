@@ -4,13 +4,14 @@
 #    - PRIV1_DOMAIN (e.g. f*****.***)
 #    - PUB1_DOMAIN (e.g. b*****.**)
 
-DB_NAMESPACE     = db
-DB_SVC_NAME      = mysql
-DB_BACKUP_BUCKET = nma-backup
-DB_BACKUP_OPTS   = --set mysql.host=$(DB_SVC_NAME).$(DB_NAMESPACE)
-DB_BACKUP_OPTS  += --set bucket=$(DB_BACKUP_BUCKET)
-DB_BACKUP_OPTS  += --set secret.name=$(DB_SVC_NAME)
-DB_BACKUP_OPTS  += --set secret.key=mysql-root-password
+DB_NAMESPACE           = db
+DB_SVC_NAME            = mysql
+DB_BACKUP_BUCKET       = nma-backup
+DB_BACKUP_OPTS         = --set mysql.host=$(DB_SVC_NAME).$(DB_NAMESPACE)
+DB_BACKUP_OPTS        += --set bucket=$(DB_BACKUP_BUCKET)
+DB_BACKUP_OPTS        += --set secret.name=$(DB_SVC_NAME)
+DB_BACKUP_OPTS        += --set secret.key=mysql-root-password
+TELEGRAM_BOT_NAMESPACE = telegram-bot
 
 .PHONY: default
 default: upgrade-all
@@ -28,6 +29,7 @@ upgrade-all:
 	make compte
 	make wordpress-bicnic
 	make phpmyadmin
+	make nuki-logger
 
 .PHONY: ingress-watchers
 ingress-watchers: check-param-priv1-domain
@@ -149,6 +151,58 @@ phpmyadmin: check-param-priv1-domain ns-tools
 	  --set db.host=mysql.$(DB_NAMESPACE) \
 	  pma \
 	  bitnami/phpmyadmin
+
+# NOTE: standard-csi storage class min size is 1Gi
+.PHONY: nuki-logger
+nuki-logger: gke-storage 
+	helm upgrade --install \
+		--namespace tools \
+		--set architecture=high-availability \
+		--set replicaCount=2 \
+		--set affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight=100 \
+		--set affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey=kubernetes.io/hostname \
+		--set resources.requests.cpu=10m \
+		--set resources.limits.cpu=100m \
+		--set resources.requests.memory=50Mi \
+		--set resources.limits.cpu=100m \
+		--set resources.limits.memory=100Mi \
+		--set image.debug=true \
+		--set persistence.enabled=true \
+		--set persistence.storageClass=csi-standard \
+		--set persistence.size=1Gi \
+		memcached \
+		oci://registry-1.docker.io/bitnamicharts/memcached
+	helm upgrade --install \
+		--namespace telegram-bot \
+		--create-namespace \
+		--set image.repository=nmaupu/nuki-logger \
+		--set image.tag=0.1.2-1 \
+		--set botConfig.address_id=$(shell vault read -field=nuki-address-id secret/telegram-bot/nuki-logger) \
+		--set botConfig.smartlock_id=$(shell vault read -field=nuki-smartlock-id secret/telegram-bot/nuki-logger) \
+		--set botConfig.nuki_api_token=$(shell vault read -field=nuki-api-token secret/telegram-bot/nuki-logger) \
+		--set botConfig.health_check_port=8080 \
+		--set botConfig.memcached_servers[0]=memcached.tools:11211 \
+		--set botConfig.telegram_bot.enabled=true \
+		--set botConfig.telegram_bot.sender_name=telegram \
+		--set botConfig.telegram_bot.default_check_in=15:00 \
+		--set botConfig.telegram_bot.default_check_out=11:00 \
+		--set botConfig.restrict_private_chat_ids[0]=$(shell vault read -field=telegram-private-chat-ids secret/telegram-bot/nuki-logger | cut -d, -f1) \
+		--set botConfig.restrict_private_chat_ids[1]=$(shell vault read -field=telegram-private-chat-ids secret/telegram-bot/nuki-logger | cut -d, -f2) \
+		--set botConfig.senders[0].name=telegram \
+		--set botConfig.senders[0].telegram.token=$(shell vault read -field=telegram-token secret/telegram-bot/nuki-logger) \
+		--set botConfig.senders[0].telegram.chat_id=$(shell vault read -field=telegram-chat-id secret/telegram-bot/nuki-logger) \
+		--set botConfig.senders[0].telegram.include_date=true \
+		--set botConfig.senders[0].telegram.timezone=Europe/Paris \
+		--set botConfig.senders[1].name=console \
+		--set botConfig.senders[1].console.include_date=true \
+		--set botConfig.senders[1].console.timezone=Europe/Paris \
+		--set botArgs[0]="--config=/bot/config.yaml" \
+		--set botArgs[1]="--sender=console" \
+		--set botArgs[2]="--sender=telegram" \
+		--set botArgs[3]="server" \
+		--set botArgs[4]="--interval=10s" \
+		nuki-logger \
+		telegram-bot
 
 .PHONY: priority
 priority:
