@@ -53,6 +53,8 @@ resources:
     cpu: 10m
     memory: 64Mi
 
+extraEnvVars: []
+
 nodeSelector: {}
 
 tolerations: []

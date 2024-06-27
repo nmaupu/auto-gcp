@@ -154,11 +154,11 @@ phpmyadmin: check-param-priv1-domain ns-tools
 
 # NOTE: standard-csi storage class min size is 1Gi
 .PHONY: nuki-logger
-nuki-logger: gke-storage 
+nuki-logger: gke-storage check-vault
 	helm upgrade --install \
 		--namespace tools \
 		--set architecture=high-availability \
-		--set replicaCount=2 \
+		--set replicaCount=1 \
 		--set affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight=100 \
 		--set affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].podAffinityTerm.topologyKey=kubernetes.io/hostname \
 		--set resources.requests.cpu=10m \
@@ -176,7 +176,9 @@ nuki-logger: gke-storage
 		--namespace telegram-bot \
 		--create-namespace \
 		--set image.repository=nmaupu/nuki-logger \
-		--set image.tag=0.1.2-1 \
+		--set image.tag=0.1.4 \
+		--set extraEnvVars[0].name=GOMAXPROCS \
+		--set-string extraEnvVars[0].value=1 \
 		--set botConfig.address_id=$(shell vault read -field=nuki-address-id secret/telegram-bot/nuki-logger) \
 		--set botConfig.smartlock_id=$(shell vault read -field=nuki-smartlock-id secret/telegram-bot/nuki-logger) \
 		--set botConfig.nuki_api_token=$(shell vault read -field=nuki-api-token secret/telegram-bot/nuki-logger) \

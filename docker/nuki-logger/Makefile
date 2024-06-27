@@ -1,4 +1,4 @@
-NUKI_LOGGER_VERSION=0.1.2
+NUKI_LOGGER_VERSION=0.1.4
 
 default: push
 .PHONY: default build tag tag-latest check-docker-hub clean
