@@ -5,13 +5,16 @@
 # export TF_VAR_org_id=xxxxx
 # export TF_VAR_billing_account=xxxxx
 # export TF_ADMIN=${USER}-terraform-admin
-# export TF_CREDS=~/.config/gcloud/xxxxx.json
+# export TF_CREDS=~/.config/gcloud/application_default_credentials.json
 #
 # To get these information, use :
 # gcloud organizations list
 # gcloud beta billing accounts list
 #
-# First login is to be done with :
+# JSON credentials file is created with the following command:
+# gcloud auth application-default login
+#
+# To login to use gcloud, one cas use the following command:
 # gcloud auth login
 
 bootstrap: backend.tf
