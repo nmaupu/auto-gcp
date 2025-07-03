@@ -176,7 +176,7 @@ nuki-logger: gke-storage check-vault
 		--namespace telegram-bot \
 		--create-namespace \
 		--set image.repository=nmaupu/nuki-logger \
-		--set image.tag=0.1.5-new \ # For an unknown reason, gke does not repull if imagePullPolicy is Always. I use a new name for this version I failed to build correctly the first time
+		--set image.tag=0.1.5-new \
 		--set extraEnvVars[0].name=GOMAXPROCS \
 		--set-string extraEnvVars[0].value=1 \
 		--set botConfig.address_id=$(shell vault read -field=nuki-address-id secret/telegram-bot/nuki-logger) \
