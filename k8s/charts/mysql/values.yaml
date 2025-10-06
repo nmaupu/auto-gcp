@@ -1,6 +1,8 @@
 mysql:
   image:
     debug: true
+    repository: bitnamilegacy/mysql
+    tag: 8.4.5-debian-12-r0
 
   primary:
     priorityClassName: high-priority
@@ -9,7 +11,7 @@ mysql:
       size: 2Gi
     configuration: |-
       [mysqld]
-      default_authentication_plugin=mysql_native_password
+      mysql_native_password=ON
       skip-name-resolve
       explicit_defaults_for_timestamp
       basedir=/opt/bitnami/mysql

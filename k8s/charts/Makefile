@@ -4,6 +4,10 @@
 #    - PRIV1_DOMAIN (e.g. f*****.***)
 #    - PUB1_DOMAIN (e.g. b*****.**)
 
+# Update 2025-10-06: bitnami deprecated their entire docker images for:
+# - bitnamisecure: secure docker images (no tag, just latest afaik)
+# - bitnamilegacy: legacy docker images (not updated anymore)
+
 DB_NAMESPACE           = db
 DB_SVC_NAME            = mysql
 DB_BACKUP_BUCKET       = nma-backup
@@ -63,34 +67,6 @@ mysql: check-vault gke-storage ns-db
 	  $(DB_BACKUP_OPTS) \
 	  bak-mysql \
 	  mysql-backup
-
-.PHONY: dolibarr
-dolibarr: gke-storage check-vault ns-tools ns-db gke-snapshotclass
-	helm upgrade --install \
-	  --namespace tools \
-	  --set image.tag=15.0.2 \
-	  --set ingress.hosts="{$(shell vault read -field appurl secret/gce/mysql-dolibarr)}" \
-	  --set conf.db_host=$(DB_SVC_NAME).$(DB_NAMESPACE) \
-	  --set conf.db_username=$(shell vault read -field username secret/gce/mysql-dolibarr) \
-	  --set conf.db_password=$(shell vault read -field password secret/gce/mysql-dolibarr) \
-	  --set conf.cookie_key=$(shell vault read -field cookie_key secret/gce/mysql-dolibarr) \
-	  dolibarr \
-	  dolibarr
-	helm upgrade --install \
-	  --namespace $(DB_NAMESPACE) \
-	  --set job.schedule="0 4 * * *" \
-	  --set mysql.database=dolibarr \
-		--set serviceAccountName=mysql \
-	  $(DB_BACKUP_OPTS) \
-	  bak-dolibarr \
-	  mysql-backup
-	helm upgrade --install \
-		--namespace tools \
-		--set pvc=dolibarr \
-		--set maxKeep="14 days" \
-		--set job.schedule="34 4 * * *" \
-		pv-snap-dolibarr \
-		pv-snapshotter
 
 .PHONY: compte
 compte: check-vault ns-tools ns-db
@@ -157,6 +133,9 @@ phpmyadmin: check-param-priv1-domain ns-tools
 nuki-logger: gke-storage check-vault
 	helm upgrade --install \
 		--namespace tools \
+    --set global.security.allowInsecureImages=true \
+		--set image.repository=bitnamisecure/memcached \
+    --set image.tag=latest \
 		--set architecture=high-availability \
 		--set replicaCount=1 \
 		--set affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution[0].weight=100 \

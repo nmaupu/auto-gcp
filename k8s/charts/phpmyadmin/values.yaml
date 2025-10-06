@@ -1,3 +1,7 @@
+image:
+  repository: bitnamilegacy/phpmyadmin
+  tag: 5.2.2-debian-12-r23
+
 commonLabels:
   lb-type: priv
 

@@ -10,7 +10,7 @@ rules:
   - snapshot.storage.k8s.io
   resources:
   - volumesnapshots
-  verbs: ["get", "list", "create", "delete"]
+  verbs: ["get", "list", "watch", "create", "delete"]
 - apiGroups:
   - ""
   resources:
