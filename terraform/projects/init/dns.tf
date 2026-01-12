@@ -143,6 +143,20 @@ module "home_root_records" {
   ]
 }
 
+module "home_web_records" {
+  source       = "../../modules/dns/record_set"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_priv1_managed_zone.name
+  name         = "web-static.home.${module.kube_priv1_managed_zone.dns_name}"
+
+  type = "CNAME"
+  ttl  = "86400"
+
+  rrdatas = [
+    "home.${module.kube_priv1_managed_zone.dns_name}",
+  ]
+}
+
 # module "nas_home_root_records" {
 #   source       = "../../modules/dns/record_set"
 #   project_id   = module.kube.project_id
@@ -170,4 +184,3 @@ module "home_root_records" {
 #     "home.${module.kube_priv1_managed_zone.dns_name}",
 #   ]
 # }
-
