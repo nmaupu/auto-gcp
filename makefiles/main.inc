@@ -1,10 +1,17 @@
 export TF_VAR_region ?= ${GCLOUD_REGION}
 export GOOGLE_PROJECT=${TF_ADMIN}
-export GOOGLE_CREDENTIALS=$(cat ${TF_CREDS})
 
-ifndef GOOGLE_PROJECT
-	$(error specify GOOGLE_PROJECT var for terraform tfstate location)
+ifeq ($(strip $(TF_ADMIN)),)
+$(error specify TF_ADMIN var for terraform tfstate location)
 endif
+ifeq ($(strip $(TF_CREDS)),)
+$(error specify TF_CREDS var pointing to a GCP credentials json file)
+endif
+ifeq ($(wildcard $(TF_CREDS)),)
+$(error TF_CREDS file not found: $(TF_CREDS))
+endif
+
+export GOOGLE_CREDENTIALS=$(shell cat $(TF_CREDS))
 
 default: plan
 .PHONY: init plan apply destroy

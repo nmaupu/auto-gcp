@@ -98,6 +98,20 @@ module "pub1_CNAME_voyages" {
   ]
 }
 
+module "pub1_TXT_mail_dkim" {
+  source       = "../../modules/dns/record_set"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_pub1_managed_zone.name
+  name         = "google._domainkey.${module.kube_pub1_managed_zone.dns_name}"
+
+  type = "TXT"
+  ttl  = "10800"
+
+  rrdatas = [
+    "\"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqp2pAILwzERA6uUucbYWgnIsUOqyGu0TOBYGmbOPrfs3KL5yLFM6I4fTJ6SNAS5jwIE7BAi3YqzOMvxrNYSwQnzrO8DHNNH8JAwO6q9cpWj6lO4nF2iXSi8TwFXvdJnWapdqEBL+qB7AlXzGD0aJoXIJieoE/+LBKp0TMFNAFo5iDUOXyQ22FhG6RrSH3PEFP\" \"Vlz0bKPO/rJ2VVs8Ks//toKCas8whiNRpDw/cbJhSiOskBI3h75NUlBsMs4oGgxlUKXqZH6Mg7dhS0iwpGb17FRw/nh+c7AfNynOv4AtI2nVrxMKUQWxvF6Ypr5Z8H+KWOpdAL9xQTgL3FnH1RxUwIDAQAB\"",
+  ]
+}
+
 #module "pub1_CNAME_bing" {
 #  source       = "../../modules/dns/record_set"
 #  project_id   = module.kube.project_id
@@ -154,6 +168,20 @@ module "home_web_records" {
 
   rrdatas = [
     "home.${module.kube_priv1_managed_zone.dns_name}",
+  ]
+}
+
+module "priv1_TXT_mail_dkim" {
+  source       = "../../modules/dns/record_set"
+  project_id   = module.kube.project_id
+  managed_zone = module.kube_priv1_managed_zone.name
+  name         = "google._domainkey.${module.kube_priv1_managed_zone.dns_name}"
+
+  type = "TXT"
+  ttl  = "10800"
+
+  rrdatas = [
+    "\"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuUo/JahfI1oJNbql8G1Et9yGWlD7H16zOMWNljBfGdLvGI/x7zUJfth8iEBT9rvI/3XZ3T7M263EWhrmru/qYYop4AHROIAh0fFc2J5xEBRGrLkalwetDt5MoxgAgMQaEdadu+Dt/LO6vixnpGxyjmDvIoNVKk4tns6N+4EJZ+PLeeg0QsL3hlQSdjH8vdKk2\" \"WjgRZdrDjKb+giC8GO83dDOcLfIOIM5J0SLRTi24rx82zu3rRX7CMPUxXNCVHGVGLhxSSBdwuXEWeKVF163jPSekrGGZJni9Xgp6RctRfrlo5IW6dCPXghNdkMFX9rLf9p9cstskRpWwE8mhjQjNQIDAQAB\"",
   ]
 }
 
